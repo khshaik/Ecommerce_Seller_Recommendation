@@ -1,0 +1,59 @@
+2025em1100102
+└── dsp_ga_2025em1100102_20112025
+    ├── clean
+    │   └── category/ non-category
+    |        └── input
+    │               └── raw
+    │                    ├── company_sales - company_sales_clean.csv
+    │                    ├── competitor_sales - competitor_sales_clean.csv
+    │                    └── seller_catalog - seller_catalog_clean.csv
+    |        └── output
+    │               └── bronze
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv
+    │               └── quarantine
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv   
+    │               └── silver
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv
+    |        └── processed
+    │               └── gold
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv
+    │               └── recommendations
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv   
+    ├── dirty
+    │   └── category/ non-category
+    |        └── input
+    │               └── raw
+    │                    ├── company_sales - company_sales_clean.csv
+    │                    ├── competitor_sales - competitor_sales_clean.csv
+    │                    └── seller_catalog - seller_catalog_clean.csv
+    |        └── output
+    │               └── bronze
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv
+    │               └── quarantine
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv   
+    │               └── silver
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv
+    |        └── processed
+    │               └── gold
+    │                    ├── company_sales - run_date=2025-11-21_195457/*.csv
+    │                    ├── competitor_sales - run_date=2025-11-21_195457/*.csv
+    │                    └── seller_catalog - run_date=2025-11-21_195457/*.csv
+    │               └── recommendations
+    │                    ├── company - run_date=2025-11-21_195457/company_seller_recommendation.csv
+    │                    ├── competitor - run_date=2025-11-21_195457/competitor_seller_recommendation.csv

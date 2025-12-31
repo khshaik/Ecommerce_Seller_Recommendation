@@ -1,0 +1,123 @@
+spark:
+  shuffle_partitions: 8
+  log_level: "WARN"
+  configs:
+    spark.sql.extensions: "io.delta.sql.DeltaSparkSessionExtension"
+    spark.sql.catalog.spark_catalog: "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+    spark.sql.adaptive.enabled: "true"
+    spark.hadoop.fs.s3a.impl: "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    spark.hadoop.fs.s3a.aws.credentials.provider: "com.amazonaws.auth.DefaultAWSCredentialsProviderChain"
+    spark.hadoop.fs.s3a.path.style.access: "true"
+    spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version: "2"
+    spark.hadoop.fs.s3a.connection.timeout: "60000"
+    spark.hadoop.fs.s3a.connection.establish.timeout: "5000"
+    spark.hadoop.fs.s3a.attempts.maximum: "5"
+
+paths:
+  input_root: "s3a://2025em1100102/ecomm/input/dirty"
+  raw_company_sales_data:  "s3a://2025em1100102/ecomm/input/dirty/company/company_sales_dirty.csv"
+  raw_competitor_sales_data: "s3a://2025em1100102/ecomm/input/dirty/competitor/competitor_sales_dirty.csv"
+  raw_sellers_catalogue_data: "s3a://2025em1100102/ecomm/input/dirty/seller/seller_catalog_dirty.csv"
+
+  output_root: "s3a://2025em1100102/ecomm/output"
+
+  bronze_root: "s3a://2025em1100102/ecomm/output/bronze/dirty"
+  bronze_company_sales_data: "s3a://2025em1100102/ecomm/output/bronze/dirty/company"
+  bronze_sellers_catalogue_data: "s3a://2025em1100102/ecomm/output/bronze/dirty/seller"
+  bronze_competitor_sales_data: "s3a://2025em1100102/ecomm/output/bronze/dirty/competitor"
+
+  quarantine_root: "s3a://2025em1100102/ecomm/output/quarantine/dirty"
+  quarantine_company_sales_data:  s3a://2025em1100102/ecomm/output/quarantine/dirty/company"
+  quarantine_sellers_catalogue_data: "s3a://2025em1100102/ecomm/output/quarantine/dirty/seller"
+  quarantine_competitor_sales_data:    "s3a://2025em1100102/ecomm/output/quarantine/dirty/competitor"
+
+  silver_company_sales_data: s3a://2025em1100102/ecomm/output/silver/dirty/company"
+  silver_sellers_catalogue_data: "s3a://2025em1100102/ecomm/output/silver/dirty/seller"
+  silver_competitor_sales_data:    "s3a://2025em1100102/ecomm/output/silver/dirty/competitor"
+
+  gold_root: "s3a://2025em1100102/ecomm/output/gold/dirty"
+  gold_company_sales_data: "s3a://2025em1100102/ecomm/output/gold/dirty/company"
+  gold_seller_catalog_data: "s3a://2025em1100102/ecomm/output/gold/dirty/seller"
+  gold_competitor_sales_data: "s3a://2025em1100102/ecomm/output/gold/dirty/competitor"
+
+  gold_recommendation_company_data: "s3a://2025em1100102/ecomm/output/gold/dirty/recommendation/company"
+  gold_recommendation_competitor_data: "s3a://2025em1100102/ecomm/output/gold/dirty/recommendation/competitor"
+
+tables:
+    company_sales_hudi_table: "company_sales_data"
+    competitor_sales_hudi_table: "competitor_sales_data"
+    seller_catalog_hudi_table: "seller_catalog_data"
+    
+dq:
+  company_sales_data_required: ["product_id","name","category","price"]
+  product_price_min: 0.0
+
+  #sellers_catalogue_data_required: ["seller_id","item_id","item_name", "category", "marketplace_price", "stock_qty"]
+  #seller_catalog_numeric_checks: { marketplace_price: 0, stock_qty: 0 }
+  sellers_catalogue_data_required:
+    - seller_id
+    - item_id
+    - item_name
+    - category
+    - marketplace_price
+    - stock_qty
+
+  seller_catalog_numeric_checks:
+    marketplace_price: 0
+    stock_qty: 0
+
+  # ---------------------------
+  # COMPANY SALES DQ RULES
+  # ---------------------------
+  company_sales_required:
+    - item_id
+    - units_sold
+    - revenue
+    - sale_date
+
+  company_sales_numeric_checks:
+    units_sold_min: 0
+    revenue_min: 0
+
+  company_sales_date_checks:
+    max_date_today: true   # sale_date <= current_date()
+    allow_multiple_formats: true
+    allowed_formats:
+      - "dd/MM/yyyy"
+      - "dd/MM/yy"
+      - "yyyy-MM-dd"
+      - "dd-MM-yyyy"
+
+  # Derivation logic
+  revenue_derivation:
+    enable: true
+    price_column: "marketplace_price"
+    qty_column: "units_sold"
+
+  # Columns to fill with 0 when missing
+  fill_missing_with_zero:
+    - units_sold
+    - revenue
+
+  competitor_sales_data_required: ["order_id","customer_id","product_id","order_ts","qty","unit_price"]
+
+  order_status_allowed: ["PLACED","SHIPPED","CANCELLED","RETURNED","DELIVERED"]
+  qty_max: 10000
+  price_max: 100000.0
+
+  # ---------------------------
+  # COMPETITOR SALES DQ RULES
+  # ---------------------------
+  competitor_sales_numeric_checks:
+    units_sold_min: 0
+    revenue_min: 0
+    marketplace_price_min: 0
+
+  competitor_date_formats:
+    - "dd/MM/yyyy"
+    - "dd/MM/yy"
+    - "yyyy-MM-dd"
+    - "dd-MM-yyyy"
+
+consumption:
+  backfill_days: 7

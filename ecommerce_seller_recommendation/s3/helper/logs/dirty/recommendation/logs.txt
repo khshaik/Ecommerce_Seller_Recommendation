@@ -1,0 +1,546 @@
+(.venv) YUIOP@HQN473V4C2 DSP_GA_2025em1100102_20112025 % clear
+(.venv) YUIOP@HQN473V4C2 DSP_GA_2025em1100102_20112025 % PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/YUIOP/Desktop/jars/woodstox-core-6.2.9.jar:/Users/YUIOP/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/YUIOP/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/YUIOP/Desktop/jars/hadoop-common-3.3.4.jar,/Users/YUIOP/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/YUIOP/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/YUIOP/Desktop/jars/delta-storage-3.2.0.jar,/Users/YUIOP/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.s3.src.consumption_recommendation \
+--config 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml              
+[TIMER] JOB started at: 2025-11-20 19:36:51.535489
+25/11/20 19:36:55 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+
+===== RUNNING COMPANY ONLY =====
+
+==============================
+   COMPANY RECOMMENDATION
+==============================
+[company] Using Hudi table path: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/company_sales_hudi/run_date=2025-11-20_160009
+[company] Using Seller Catalog path: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/seller_catalog_hudi/run_date=2025-11-20_160420
+Loaded company rows    : 903696                                                 
+Loaded seller rows     : 922499                                                 
+
+Company top-10 items per category:
++--------+--------------------------+---------------+-------------------+------------+----------------------+
+|item_id |item_name                 |category       |company_total_units|market_price|num_sellers_in_catalog|
++--------+--------------------------+---------------+-------------------+------------+----------------------+
+|i1003341|Lg 7kg Washing Machine    |Home Appliances|2000.0             |3440.0      |1                     |
+|i320216 |H&m Cotton Shirt          |Apparel        |2000.0             |125178.22   |1                     |
+|i406204 |Dell Xps 13 Laptop        |Electronics    |2000.0             |73353.95    |1                     |
+|i515349 |Allen Solly Formal Pants  |Apparel        |2000.0             |118154.02   |1                     |
+|i661158 |Samsung Galaxy S24 Ultra  |Electronics    |2000.0             |88221.81    |1                     |
+|i730141 |Dyson Vacuum Cleaner      |Home Appliances|2000.0             |12722.52    |1                     |
+|i846473 |Sony Wh-1000xm5 Headphones|Electronics    |2000.0             |18070.1     |1                     |
+|i856462 |Sony Wh-1000xm5 Headphones|Electronics    |2000.0             |57966.38    |1                     |
+|i886731 |Dyson Vacuum Cleaner      |Home Appliances|2000.0             |22219.13    |1                     |
+|i959003 |Lg 7kg Washing Machine    |Home Appliances|2000.0             |135156.29   |1                     |
++--------+--------------------------+---------------+-------------------+------------+----------------------+
+
+
+[company] Global Top-10 items (across all categories):
++--------+--------------------------+---------------+-------------------+------------+----------------------+
+|item_id |item_name                 |category       |company_total_units|market_price|num_sellers_in_catalog|
++--------+--------------------------+---------------+-------------------+------------+----------------------+
+|i1003341|Lg 7kg Washing Machine    |Home Appliances|2000.0             |3440.0      |1                     |
+|i320216 |H&m Cotton Shirt          |Apparel        |2000.0             |125178.22   |1                     |
+|i406204 |Dell Xps 13 Laptop        |Electronics    |2000.0             |73353.95    |1                     |
+|i515349 |Allen Solly Formal Pants  |Apparel        |2000.0             |118154.02   |1                     |
+|i661158 |Samsung Galaxy S24 Ultra  |Electronics    |2000.0             |88221.81    |1                     |
+|i730141 |Dyson Vacuum Cleaner      |Home Appliances|2000.0             |12722.52    |1                     |
+|i846473 |Sony Wh-1000xm5 Headphones|Electronics    |2000.0             |18070.1     |1                     |
+|i856462 |Sony Wh-1000xm5 Headphones|Electronics    |2000.0             |57966.38    |1                     |
+|i886731 |Dyson Vacuum Cleaner      |Home Appliances|2000.0             |22219.13    |1                     |
+|i959003 |Lg 7kg Washing Machine    |Home Appliances|2000.0             |135156.29   |1                     |
++--------+--------------------------+---------------+-------------------+------------+----------------------+
+
+[company] sellers_count=51, topn_count=10, candidate_pairs_total=510            
+[COMPANY] Excluded pairs written to: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/company/run_date=2025-11-20_193658/excluded_pairs
+
+Company - Excluded seller,item pairs
++-----------+----------+
+| seller_id | item_id  |
++-----------+----------+
+| S112      | i320216  |
+| S112      | i515349  |
+| S116      | i406204  |
+| S116      | i730141  |
+| S118      | i856462  |
+| S121      | i886731  |
+| S122      | i846473  |
+| S129      | i661158  |
+| S134      | i959003  |
+| S143      | i1003341 |
++-----------+----------+
+
+💾 Writing company recommendation → s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/company/run_date=2025-11-20_193658
+✔ Renamed part-00000-97a05ba3-1773-4153-8af2-27fb438796a4-c000.csv → company_seller_recommendation.csv
+
+===== COMPANY RECOMMENDATION SUMMARY =====
+Total sellers                 : 51
+Total categories              : 3
+Top-N items per category      : 4
+Theoretical total combinations     : 510 (= 51 × 3 × 4)
+Seller–item pairs removed (dupes) : 10
+Total recommendations written : 500
+Total company top items    : 10
+Avg recommendations per seller: 9.80
+
+Sample recommendations (up to 20):
++---------+--------+----------------------+---------------+------------+-------------------+----------------+
+|seller_id|item_id |item_name             |category       |market_price|expected_units_sold|expected_revenue|
++---------+--------+----------------------+---------------+------------+-------------------+----------------+
+|S100     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S108     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S110     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S115     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S116     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S123     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S125     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S131     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S136     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S145     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S117     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S119     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S142     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S148     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S149     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S104     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S109     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S118     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S130     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
+|S132     |i1003341|Lg 7kg Washing Machine|Home Appliances|3440.0      |2000.0             |6880000.0       |
++---------+--------+----------------------+---------------+------------+-------------------+----------------+
+only showing top 20 rows
+
+
+===== RUNNING COMPETITOR ONLY =====
+===== RUNNING COMPETITOR ONLY =====
+
+==============================
+ COMPETITOR RECOMMENDATION
+==============================
+[competitor] Using Hudi path: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/competitor_sales_hudi/run_date=2025-11-20_190500
+[competitor] Using Seller Catalog path: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/seller_catalog_hudi/run_date=2025-11-20_160420
+Loaded competitor rows : 941539                                                 
+Loaded seller rows     : 922499                                                 
+
+Competitor top-10 items per category:
+[Stage 130:=================================================>       (7 + 1) / 8]
++-------+--------------------------+-----------+----------------+------------+----------------------+
+|item_id|item_name                 |category   |comp_total_units|market_price|num_sellers_in_catalog|
++-------+--------------------------+-----------+----------------+------------+----------------------+
+|i13688 |Samsung Galaxy S24 Ultra  |Electronics|3000.0          |68261.23    |1                     |
+|i146257|Sony Wh-1000xm5 Headphones|Electronics|3000.0          |148128.75   |1                     |
+|i158284|Sony Wh-1000xm5 Headphones|Electronics|3000.0          |49234.77    |1                     |
+|i244311|Puma Running Shoes        |Footwear   |3000.0          |83422.57    |1                     |
+|i370177|Sony Wh-1000xm5 Headphones|Electronics|3000.0          |30208.1     |1                     |
+|i52174 |Nike Air Zoom Pegasus     |Footwear   |3000.0          |100150.71   |1                     |
+|i668448|Skechers Gowalk           |Footwear   |3000.0          |145069.47   |1                     |
+|i692079|Samsung Galaxy S24 Ultra  |Electronics|3000.0          |44311.02    |1                     |
+|i704317|Skechers Gowalk           |Footwear   |3000.0          |132124.14   |1                     |
+|i797499|U.s. Polo T-shirt         |Apparel    |3000.0          |143505.19   |1                     |
++-------+--------------------------+-----------+----------------+------------+----------------------+
+
+
+[competitor] Global Top-10 competitor items:
++-------+--------------------------+-----------+----------------+------------+----------------------+
+|item_id|item_name                 |category   |comp_total_units|market_price|num_sellers_in_catalog|
++-------+--------------------------+-----------+----------------+------------+----------------------+
+|i13688 |Samsung Galaxy S24 Ultra  |Electronics|3000.0          |68261.23    |1                     |
+|i146257|Sony Wh-1000xm5 Headphones|Electronics|3000.0          |148128.75   |1                     |
+|i158284|Sony Wh-1000xm5 Headphones|Electronics|3000.0          |49234.77    |1                     |
+|i244311|Puma Running Shoes        |Footwear   |3000.0          |83422.57    |1                     |
+|i370177|Sony Wh-1000xm5 Headphones|Electronics|3000.0          |30208.1     |1                     |
+|i52174 |Nike Air Zoom Pegasus     |Footwear   |3000.0          |100150.71   |1                     |
+|i668448|Skechers Gowalk           |Footwear   |3000.0          |145069.47   |1                     |
+|i692079|Samsung Galaxy S24 Ultra  |Electronics|3000.0          |44311.02    |1                     |
+|i704317|Skechers Gowalk           |Footwear   |3000.0          |132124.14   |1                     |
+|i797499|U.s. Polo T-shirt         |Apparel    |3000.0          |143505.19   |1                     |
++-------+--------------------------+-----------+----------------+------------+----------------------+
+
+[competitor] sellers_count=51, topn_count=10, candidate_pairs_total=510         
+                                                                                
+Competitor - Excluded seller,item pairs
++-----------+---------+
+| seller_id | item_id |
++-----------+---------+
+| S102      | i244311 |
+| S116      | i797499 |
+| S119      | i52174  |
+| S120      | i13688  |
+| S122      | i370177 |
+| S122      | i692079 |
+| S124      | i704317 |
+| S127      | i158284 |
+| S142      | i668448 |
+| S145      | i146257 |
++-----------+---------+
+[competitor] missing_count=500, already_have_pairs_removed=10
+[competitor] distinct_sellers=51, distinct_categories=3
+[competitor] final_recommendations=500, avg_rows_per_seller=9.80
+
+💾 Writing competitor recommendation → s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/competitor/run_date=2025-11-20_193742
+✔ Renamed part-00000-8f38b06a-9e9d-4781-afb0-153af834191d-c000.csv → competitor_seller_recommendation.csv
+
+===== COMPETITOR RECOMMENDATION SUMMARY =====
+Total sellers                 : 51
+Total categories              : 3
+Top-N items per category      : 5
+Theoretical total combinations     : 510 (= 51 × 3 × 5)
+Seller–item pairs removed (dupes) : 10
+Total recommendations written : 500
+Total company top items    : 10
+Avg recommendations per seller: 9.80
+
+Sample recommendations (up to 20):
++---------+-------+------------------------+-----------+------------+-------------------+----------------+
+|seller_id|item_id|item_name               |category   |market_price|expected_units_sold|expected_revenue|
++---------+-------+------------------------+-----------+------------+-------------------+----------------+
+|S100     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S108     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S110     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S115     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S116     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S123     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S125     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S131     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S136     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S145     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S117     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S119     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S142     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S148     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S149     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S104     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S109     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S118     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S130     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
+|S132     |i13688 |Samsung Galaxy S24 Ultra|Electronics|68261.23    |3000.0             |2.0478369E8     |
++---------+-------+------------------------+-----------+------------+-------------------+----------------+
+only showing top 20 rows
+
+
+==============================
+ ALL RECOMMENDATIONS COMPLETE
+==============================
+Company metrics   : {'total_sellers': 51, 'top_items': 10, 'recommendations': 500, 'null_price_count': 0, 'null_itemname_count': 0}
+Competitor metrics: {'total_sellers': 51, 'top_items': 10, 'recommendations': 500, 'null_price_count': 0, 'null_itemname_count': 0}
+
+                                                                              -----------------------------
+(.venv) YUIOP@HQN473V4C2 DSP_GA_2025em1100102_20112025 % PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/YUIOP/Desktop/jars/woodstox-core-6.2.9.jar:/Users/YUIOP/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/YUIOP/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/YUIOP/Desktop/jars/hadoop-common-3.3.4.jar,/Users/YUIOP/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/YUIOP/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/YUIOP/Desktop/jars/delta-storage-3.2.0.jar,/Users/YUIOP/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.s3.src.consumption_recommendation \
+--config 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml
+[TIMER] JOB started at: 2025-11-20 19:54:04.147526
+25/11/20 19:54:08 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+
+===== RUNNING COMPANY ONLY =====
+
+==============================
+   COMPANY RECOMMENDATION
+==============================
+[company] Using Hudi table path: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/company_sales_hudi/run_date=2025-11-20_160009
+[company] Using Seller Catalog path: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/seller_catalog_hudi/run_date=2025-11-20_160420
+Loaded company rows    : 903696                                                 
+Loaded seller rows     : 922499                                                 
+
+Company top-10 items per category:
++-------+--------------------------+-----------+-------------------+------------+----------------------+
+|item_id|item_name                 |category   |company_total_units|market_price|num_sellers_in_catalog|
++-------+--------------------------+-----------+-------------------+------------+----------------------+
+|i319436|Zara Maxi Dress           |Apparel    |2000.0             |42836.4     |1                     |
+|i320216|H&m Cotton Shirt          |Apparel    |2000.0             |125178.22   |1                     |
+|i346048|Allen Solly Formal Pants  |Apparel    |2000.0             |102157.98   |1                     |
+|i430676|H&m Cotton Shirt          |Apparel    |2000.0             |5646.15     |1                     |
+|i515349|Allen Solly Formal Pants  |Apparel    |2000.0             |118154.02   |1                     |
+|i671597|Zara Maxi Dress           |Apparel    |2000.0             |47368.24    |1                     |
+|i782446|Levis Denim Jacket        |Apparel    |2000.0             |73063.7     |1                     |
+|i800950|U.s. Polo T-shirt         |Apparel    |2000.0             |26608.61    |1                     |
+|i839345|Zara Maxi Dress           |Apparel    |2000.0             |29946.53    |1                     |
+|i906536|Levis Denim Jacket        |Apparel    |2000.0             |83914.53    |1                     |
+|i297288|Boat Smartwatch           |Electronics|2000.0             |4893.77     |1                     |
+|i361264|Apple Iphone 15 Pro       |Electronics|2000.0             |61656.49    |1                     |
+|i406204|Dell Xps 13 Laptop        |Electronics|2000.0             |73353.95    |1                     |
+|i433602|Dell Xps 13 Laptop        |Electronics|2000.0             |87535.16    |1                     |
+|i661158|Samsung Galaxy S24 Ultra  |Electronics|2000.0             |88221.81    |1                     |
+|i734875|Sony Wh-1000xm5 Headphones|Electronics|2000.0             |76410.18    |1                     |
+|i78796 |Sony Wh-1000xm5 Headphones|Electronics|2000.0             |39056.46    |1                     |
+|i846473|Sony Wh-1000xm5 Headphones|Electronics|2000.0             |18070.1     |1                     |
+|i856462|Sony Wh-1000xm5 Headphones|Electronics|2000.0             |57966.38    |1                     |
+|i965226|Sony Wh-1000xm5 Headphones|Electronics|2000.0             |45196.93    |1                     |
+|i15456 |Reebok Nano X4            |Footwear   |2000.0             |101571.73   |1                     |
+|i195367|Reebok Nano X4            |Footwear   |2000.0             |38621.97    |1                     |
+|i268948|Puma Running Shoes        |Footwear   |2000.0             |92443.69    |1                     |
+|i334854|Adidas Ultraboost 23      |Footwear   |2000.0             |107914.18   |1                     |
+|i429625|Puma Running Shoes        |Footwear   |2000.0             |32832.16    |1                     |
+|i46881 |Skechers Gowalk           |Footwear   |2000.0             |121742.28   |1                     |
+|i683025|Nike Air Zoom Pegasus     |Footwear   |2000.0             |115991.15   |1                     |
+|i706835|Puma Running Shoes        |Footwear   |2000.0             |86132.47    |1                     |
+|i85896 |Puma Running Shoes        |Footwear   |2000.0             |21710.97    |1                     |
+|i924456|Adidas Ultraboost 23      |Footwear   |2000.0             |64292.17    |1                     |
++-------+--------------------------+-----------+-------------------+------------+----------------------+
+only showing top 30 rows
+
+
+[company] Top-N per category (category -> count):
++---------------+-----+                                                         
+|category       |count|
++---------------+-----+
+|Apparel        |10   |
+|Electronics    |10   |
+|Footwear       |10   |
+|Home Appliances|10   |
++---------------+-----+
+
+[company] sellers_count=51, topn_count=40, candidate_pairs_total=2040           
+[COMPANY] Excluded pairs written to: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/company/run_date=2025-11-20_195411/excluded_pairs
+
+Company - Excluded seller,item pairs
++-----------+----------+
+| seller_id | item_id  |
++-----------+----------+
+| S100      | i924456  |
+| S101      | i346048  |
+| S104      | i361264  |
+| S106      | i297288  |
+| S108      | i195367  |
+| S108      | i334854  |
+| S109      | i430676  |
+| S109      | i800950  |
+| S112      | i320216  |
+| S112      | i515349  |
+| S112      | i965226  |
+| S113      | i998328  |
+| S114      | i42871   |
+| S116      | i406204  |
+| S116      | i730141  |
+| S118      | i856462  |
+| S119      | i782446  |
+| S120      | i706835  |
+| S121      | i886731  |
+| S122      | i846473  |
+| S123      | i15456   |
+| S123      | i671597  |
+| S126      | i46881   |
+| S127      | i734875  |
+| S129      | i661158  |
+| S131      | i429625  |
+| S131      | i433602  |
+| S134      | i85896   |
+| S134      | i959003  |
+| S137      | i362413  |
+| S137      | i683025  |
+| S140      | i239787  |
+| S140      | i246619  |
+| S141      | i319436  |
+| S143      | i1003341 |
+| S148      | i78796   |
+| S148      | i839345  |
+| S149      | i268948  |
+| S149      | i906536  |
+| S150      | i523639  |
++-----------+----------+
+
+💾 Writing company recommendation → s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/company/run_date=2025-11-20_195411
+✔ Renamed part-00000-f1d33ae5-dec5-4cc3-a082-03b4a3147793-c000.csv → company_seller_recommendation.csv
+
+===== COMPANY RECOMMENDATION SUMMARY =====
+Total sellers                 : 51
+Total categories              : 4
+Top-N items per category      : 10
+Theoretical total combinations     : 2040 (= 51 × 4 × 10)
+Seller–item pairs removed (dupes) : 40
+Total recommendations written : 2000
+Total company top items    : 40
+Avg recommendations per seller: 39.22
+
+Sample recommendations (up to 20):
++---------+-------+--------------+--------+------------+-------------------+----------------+
+|seller_id|item_id|item_name     |category|market_price|expected_units_sold|expected_revenue|
++---------+-------+--------------+--------+------------+-------------------+----------------+
+|S100     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S108     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S110     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S115     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S116     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S125     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S131     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S136     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S145     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S117     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S119     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S142     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S148     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S149     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S104     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S109     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S118     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S130     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S132     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
+|S134     |i15456 |Reebok Nano X4|Footwear|101571.73   |2000.0             |2.0314346E8     |
++---------+-------+--------------+--------+------------+-------------------+----------------+
+only showing top 20 rows
+
+
+===== RUNNING COMPETITOR ONLY =====
+
+==============================
+ COMPETITOR RECOMMENDATION
+==============================
+[competitor] Using Hudi path: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/competitor_sales_hudi/run_date=2025-11-20_190500
+[competitor] Using Seller Catalog path: s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/seller_catalog_hudi/run_date=2025-11-20_160420
+Loaded competitor rows : 941539                                                 
+Loaded seller rows     : 922499                                                 
+
+Competitor top-10 items per category:
++--------+--------------------------+-----------+----------------+------------+----------------------+
+|item_id |item_name                 |category   |comp_total_units|market_price|num_sellers_in_catalog|
++--------+--------------------------+-----------+----------------+------------+----------------------+
+|i23761  |H&m Cotton Shirt          |Apparel    |3000.0          |24467.89    |1                     |
+|i333466 |Levis Denim Jacket        |Apparel    |3000.0          |46648.66    |1                     |
+|i482869 |U.s. Polo T-shirt         |Apparel    |3000.0          |96083.59    |1                     |
+|i483617 |Allen Solly Formal Pants  |Apparel    |3000.0          |100675.13   |1                     |
+|i677527 |Zara Maxi Dress           |Apparel    |3000.0          |140447.81   |1                     |
+|i747482 |U.s. Polo T-shirt         |Apparel    |3000.0          |133815.78   |1                     |
+|i771289 |H&m Cotton Shirt          |Apparel    |3000.0          |44563.95    |1                     |
+|i797499 |U.s. Polo T-shirt         |Apparel    |3000.0          |143505.19   |1                     |
+|i807347 |Allen Solly Formal Pants  |Apparel    |3000.0          |145786.35   |1                     |
+|i99099  |Zara Maxi Dress           |Apparel    |3000.0          |73182.96    |1                     |
+|i108303 |Samsung Galaxy S24 Ultra  |Electronics|3000.0          |18804.85    |1                     |
+|i13688  |Samsung Galaxy S24 Ultra  |Electronics|3000.0          |68261.23    |1                     |
+|i138767 |Samsung Galaxy S24 Ultra  |Electronics|3000.0          |140604.16   |1                     |
+|i146257 |Sony Wh-1000xm5 Headphones|Electronics|3000.0          |148128.75   |1                     |
+|i158284 |Sony Wh-1000xm5 Headphones|Electronics|3000.0          |49234.77    |1                     |
+|i249406 |Sony Wh-1000xm5 Headphones|Electronics|3000.0          |141563.38   |1                     |
+|i353652 |Samsung Galaxy S24 Ultra  |Electronics|3000.0          |131502.46   |1                     |
+|i370177 |Sony Wh-1000xm5 Headphones|Electronics|3000.0          |30208.1     |1                     |
+|i392621 |Samsung Galaxy S24 Ultra  |Electronics|3000.0          |84809.1     |1                     |
+|i692079 |Samsung Galaxy S24 Ultra  |Electronics|3000.0          |44311.02    |1                     |
+|i1007054|Reebok Nano X4            |Footwear   |3000.0          |64445.46    |1                     |
+|i244311 |Puma Running Shoes        |Footwear   |3000.0          |83422.57    |1                     |
+|i309534 |Reebok Nano X4            |Footwear   |3000.0          |39814.29    |1                     |
+|i312112 |Puma Running Shoes        |Footwear   |3000.0          |8054.36     |1                     |
+|i429632 |Adidas Ultraboost 23      |Footwear   |3000.0          |105231.54   |1                     |
+|i52174  |Nike Air Zoom Pegasus     |Footwear   |3000.0          |100150.71   |1                     |
+|i668448 |Skechers Gowalk           |Footwear   |3000.0          |145069.47   |1                     |
+|i704317 |Skechers Gowalk           |Footwear   |3000.0          |132124.14   |1                     |
+|i745431 |Nike Air Zoom Pegasus     |Footwear   |3000.0          |49957.35    |1                     |
+|i997888 |Nike Air Zoom Pegasus     |Footwear   |3000.0          |6234.61     |1                     |
++--------+--------------------------+-----------+----------------+------------+----------------------+
+only showing top 30 rows
+
+
+[competitor] Top-N per category (category -> count):
++---------------+-----+                                                         
+|category       |count|
++---------------+-----+
+|Apparel        |10   |
+|Electronics    |10   |
+|Footwear       |10   |
+|Home Appliances|10   |
++---------------+-----+
+
+[competitor] sellers_count=51, topn_count=40, candidate_pairs_total=2040        
+                                                                                
+Competitor - Excluded seller,item pairs
++-----------+----------+
+| seller_id | item_id  |
++-----------+----------+
+| S102      | i244311  |
+| S103      | i745431  |
+| S105      | i747482  |
+| S106      | i972339  |
+| S108      | i997888  |
+| S109      | i353652  |
+| S109      | i392621  |
+| S109      | i864721  |
+| S114      | i807347  |
+| S116      | i797499  |
+| S117      | i482869  |
+| S119      | i52174   |
+| S120      | i13688   |
+| S120      | i99099   |
+| S122      | i370177  |
+| S122      | i692079  |
+| S123      | i312112  |
+| S123      | i429632  |
+| S124      | i1007054 |
+| S124      | i704317  |
+| S125      | i677527  |
+| S126      | i309534  |
+| S127      | i158284  |
+| S129      | i832476  |
+| S131      | i333466  |
+| S131      | i771289  |
+| S132      | i131252  |
+| S132      | i723872  |
+| S133      | i477544  |
+| S133      | i730731  |
+| S134      | i138767  |
+| S135      | i862528  |
+| S136      | i108303  |
+| S139      | i20570   |
+| S141      | i23761   |
+| S142      | i668448  |
+| S145      | i146257  |
+| S145      | i249406  |
+| S149      | i189751  |
+| S149      | i483617  |
++-----------+----------+
+[competitor] missing_count=2000, already_have_pairs_removed=40
+[competitor] distinct_sellers=51, distinct_categories=4
+[competitor] final_recommendations=2000, avg_rows_per_seller=39.22
+
+💾 Writing competitor recommendation → s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/competitor/run_date=2025-11-20_195456
+✔ Renamed part-00000-08afa9d7-eeb8-4bd8-b199-8dc44098a280-c000.csv → competitor_seller_recommendation.csv
+
+===== COMPETITOR RECOMMENDATION SUMMARY =====
+Total sellers                 : 51
+Total categories              : 4
+Top-N items per category      : 10
+Theoretical total combinations     : 2040 (= 51 × 4 × 10)
+Seller–item pairs removed (dupes) : 40
+Total recommendations written : 2000
+Total company top items    : 40
+Avg recommendations per seller: 39.22
+
+Sample recommendations (up to 20):
++---------+--------+--------------+--------+------------+-------------------+----------------+
+|seller_id|item_id |item_name     |category|market_price|expected_units_sold|expected_revenue|
++---------+--------+--------------+--------+------------+-------------------+----------------+
+|S100     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S108     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S110     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S115     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S116     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S123     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S125     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S131     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S136     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S145     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S117     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S119     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S142     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S148     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S149     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S104     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S109     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S118     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S130     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
+|S132     |i1007054|Reebok Nano X4|Footwear|64445.46    |3000.0             |1.9333638E8     |
++---------+--------+--------------+--------+------------+-------------------+----------------+
+only showing top 20 rows
+
+
+==============================
+ ALL RECOMMENDATIONS COMPLETE
+==============================
+Company metrics   : {'total_sellers': 51, 'top_items': 40, 'recommendations': 2000, 'null_price_count': 0, 'null_itemname_count': 0}
+Competitor metrics: {'total_sellers': 51, 'top_items': 40, 'recommendations': 2000, 'null_price_count': 0, 'null_itemname_count': 0}
+[TIMER] JOB finished at: 2025-11-20 19:55:42.495941, Duration: 98.35 seconds

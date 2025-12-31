@@ -1,0 +1,14 @@
+item_id,units_sold,revenue,sale_date,reason,Is valid,,,CASE,EXPECTED,REG. CODE RESULT,MATCH?
+I10000,820,110129976.7,27/10/25,valid,yes,,,I10000 OK,YES,YES,_
+I10002,909,119551162.9,2025-13-45,invalid date,no,,,I10002 invalid date,NO,NO,_
+I10003,699,52531306.25,11/10/25,valid,yes,,,I10003 OK,YES,YES,_
+,601,69096975.03,19/09/25,empty itemid,no,,,NULL item,NO,NO,_
+I10054,,6301311.02,22/09/25,empty unitssold,no,,,I10054 units_sold NULL,NO,NO,_
+I10072,562,,22/09/25,empty revenue,no,,,I10072 revenue NULL,NO,NO,_
+I10025,1498,103268794.2,,empty sale date,no,,,I10025 sale_date NULL,NO,NO,_
+I10079,1243,0,21/09/25,valid,yes,,,I10079 revenue=0 valid,YES,YES,_
+I10083,0,1243,21/09/25,valid,yes,,,I10083 units_sold=0 valid,YES,YES,_
+,1972,249770406.2,28/10/25,empty itemid,no,,,NULL second,NO,NO,_
+I10003,951,134122802.6,17/09/25,duplicate itemid,no,,,I10003 dup,NO,NO,_
+I710436,-2000,58768340.52,30/09/25,negative unitssold,no,,,I710436 -2000 units_sold,NO,NO,_
+I710436,1972,-2000,30/09/25,negative revenue,no,,,I710436 -2000 revenue,NO,NO,_

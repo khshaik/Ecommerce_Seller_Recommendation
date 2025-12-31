@@ -1,0 +1,19 @@
+seller_id,item_id,item_name,category,marketplace_price,stock_qty,reason,valid
+S101,I10000,Adidas Ultraboost 23,Footwear,126325.53,319,,yes
+S140,I10001,H&M Cotton Shirt,Apparel,80210.54,156,,yes
+S140,I10001,apparel beauty,Apparel,80210.54,156,duplicaet itemid+sellerid,no
+,I10099,Skechers GoWalk,Footwear,111486.55,390,no sellerid,no
+S102,,Skechers GoWalk,Footwear,111486.55,390,no itemid,no
+S103,I10023,,Footwear,111486.55,390,no itemname,no
+S104,I10024,REEBOK,Footwear,111486.55,390,,yes
+S105,I10023,sKetchERs,Footwear,111486.55,390,,yes
+S106,I10025,puma,Footwear,111486.55,390,,yes
+S107,I10025,puma,,111486.55,390,no category,no
+S108,I10025,puma,FOOTWEAR,111486.55,390,,yes
+S109,I10025,puma,footWEAr,111486.55,390,,yes
+S110,I10025,puma,foot wear,111486.55,390,,yes
+S111,I10042,U.S. Polo T-Shirt,Apparel,,431,no marketplace price,no
+S150,I10023,aSsasination,leather,0,495,,yes
+S151,I10023,GothY,leather,80210.54,,no stock qty,yes
+S152,I10023,GothY,leather,80210.54,0,,yes
+S140,I10001,jewellery,Apparel fashion,80210.54,156,duplicaet itemid+sellerid,no

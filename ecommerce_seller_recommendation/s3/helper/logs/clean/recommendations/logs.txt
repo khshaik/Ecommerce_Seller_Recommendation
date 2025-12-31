@@ -1,0 +1,795 @@
+(.venv) YUIOP@HQN473V4C2 DSP_GA_2025em1100102_20112025 % 
+(.venv) YUIOP@HQN473V4C2 DSP_GA_2025em1100102_20112025 % clear
+(.venv) YUIOP@HQN473V4C2 DSP_GA_2025em1100102_20112025 % ./2025em1100102/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh
+=====================================================
+ 🚀 Running Consumption Recommendation via Spark Submit
+=====================================================
+Timestamp: Thu Nov 20 23:14:53 IST 2025
+PWD: /Users/YUIOP/Desktop/Workspace/DSP_GA_2025em1100102_20112025
+-----------------------------------------------------
+:: loading settings :: url = jar:file:/Users/YUIOP/Desktop/Workspace/DSP_GA_2025em1100102_20112025/.venv/lib/python3.13/site-packages/pyspark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+Ivy Default Cache set to: /Users/YUIOP/.ivy2/cache
+The jars for the packages stored in: /Users/YUIOP/.ivy2/jars
+org.apache.hudi#hudi-spark3.5-bundle_2.12 added as a dependency
+org.apache.hadoop#hadoop-aws added as a dependency
+com.amazonaws#aws-java-sdk-bundle added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-ae089b9c-27c7-4a58-8899-0e9bb2d786cb;1.0
+        confs: [default]
+        found org.apache.hudi#hudi-spark3.5-bundle_2.12;0.15.0 in central
+        found org.apache.hive#hive-storage-api;2.8.1 in central
+        found org.slf4j#slf4j-api;1.7.36 in local-m2-cache
+        found org.apache.hadoop#hadoop-aws;3.3.4 in central
+        found com.amazonaws#aws-java-sdk-bundle;1.12.262 in central
+        found org.wildfly.openssl#wildfly-openssl;1.0.7.Final in central
+:: resolution report :: resolve 126ms :: artifacts dl 6ms
+        :: modules in use:
+        com.amazonaws#aws-java-sdk-bundle;1.12.262 from central in [default]
+        org.apache.hadoop#hadoop-aws;3.3.4 from central in [default]
+        org.apache.hive#hive-storage-api;2.8.1 from central in [default]
+        org.apache.hudi#hudi-spark3.5-bundle_2.12;0.15.0 from central in [default]
+        org.slf4j#slf4j-api;1.7.36 from local-m2-cache in [default]
+        org.wildfly.openssl#wildfly-openssl;1.0.7.Final from central in [default]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   6   |   0   |   0   |   0   ||   6   |   0   |
+        ---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-ae089b9c-27c7-4a58-8899-0e9bb2d786cb
+        confs: [default]
+        0 artifacts copied, 6 already retrieved (0kB/14ms)
+25/11/20 23:14:55 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[TIMER] JOB started at: 2025-11-20 23:14:56.913973
+25/11/20 23:14:56 INFO SparkContext: Running Spark version 3.5.2
+25/11/20 23:14:56 INFO SparkContext: OS info Mac OS X, 15.7.1, aarch64
+25/11/20 23:14:56 INFO SparkContext: Java version 21.0.6
+25/11/20 23:14:56 INFO ResourceUtils: ==============================================================
+25/11/20 23:14:56 INFO ResourceUtils: No custom resources configured for spark.driver.
+25/11/20 23:14:56 INFO ResourceUtils: ==============================================================
+25/11/20 23:14:56 INFO SparkContext: Submitted application: ConsumptionRecommendation
+25/11/20 23:14:57 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+25/11/20 23:14:57 INFO ResourceProfile: Limiting resource is cpu
+25/11/20 23:14:57 INFO ResourceProfileManager: Added ResourceProfile id: 0
+25/11/20 23:14:57 INFO SecurityManager: Changing view acls to: YUIOP
+25/11/20 23:14:57 INFO SecurityManager: Changing modify acls to: YUIOP
+25/11/20 23:14:57 INFO SecurityManager: Changing view acls groups to: 
+25/11/20 23:14:57 INFO SecurityManager: Changing modify acls groups to: 
+25/11/20 23:14:57 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: YUIOP; groups with view permissions: EMPTY; users with modify permissions: YUIOP; groups with modify permissions: EMPTY
+25/11/20 23:14:57 INFO Utils: Successfully started service 'sparkDriver' on port 60266.
+25/11/20 23:14:57 INFO SparkEnv: Registering MapOutputTracker
+25/11/20 23:14:57 INFO SparkEnv: Registering BlockManagerMaster
+25/11/20 23:14:57 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+25/11/20 23:14:57 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+25/11/20 23:14:57 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+25/11/20 23:14:57 INFO DiskBlockManager: Created local directory at /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/blockmgr-5fe7549b-eecf-4343-9904-0b78431fceaa
+25/11/20 23:14:57 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+25/11/20 23:14:57 INFO SparkEnv: Registering OutputCommitCoordinator
+25/11/20 23:14:57 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+25/11/20 23:14:57 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+25/11/20 23:14:57 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar at spark://192.168.0.3:60266/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar at spark://192.168.0.3:60266/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar at spark://192.168.0.3:60266/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar at spark://192.168.0.3:60266/jars/org.apache.hive_hive-storage-api-2.8.1.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar at spark://192.168.0.3:60266/jars/org.slf4j_slf4j-api-1.7.36.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar at spark://192.168.0.3:60266/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar at file:///Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar
+25/11/20 23:14:57 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar at file:///Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hadoop_hadoop-aws-3.3.4.jar
+25/11/20 23:14:57 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar at file:///Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar
+25/11/20 23:14:57 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar at file:///Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hive_hive-storage-api-2.8.1.jar
+25/11/20 23:14:57 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar at file:///Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.slf4j_slf4j-api-1.7.36.jar
+25/11/20 23:14:57 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar at file:///Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar
+25/11/20 23:14:57 INFO Executor: Starting executor ID driver on host 192.168.0.3
+25/11/20 23:14:57 INFO Executor: OS info Mac OS X, 15.7.1, aarch64
+25/11/20 23:14:57 INFO Executor: Java version 21.0.6
+25/11/20 23:14:57 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+25/11/20 23:14:57 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@719cf2dc for default.
+25/11/20 23:14:57 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: /Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.slf4j_slf4j-api-1.7.36.jar
+25/11/20 23:14:57 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: /Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hadoop_hadoop-aws-3.3.4.jar
+25/11/20 23:14:57 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: /Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar
+25/11/20 23:14:57 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: /Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar
+25/11/20 23:14:57 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: /Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar
+25/11/20 23:14:57 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: /Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hive_hive-storage-api-2.8.1.jar
+25/11/20 23:14:57 INFO Executor: Fetching spark://192.168.0.3:60266/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO TransportClientFactory: Successfully created connection to /192.168.0.3:60266 after 12 ms (0 ms spent in bootstraps)
+25/11/20 23:14:57 INFO Utils: Fetching spark://192.168.0.3:60266/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp16826211846008767413.tmp
+25/11/20 23:14:57 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp16826211846008767413.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hadoop_hadoop-aws-3.3.4.jar
+25/11/20 23:14:57 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hadoop_hadoop-aws-3.3.4.jar to class loader default
+25/11/20 23:14:57 INFO Executor: Fetching spark://192.168.0.3:60266/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar with timestamp 1763660696984
+25/11/20 23:14:57 INFO Utils: Fetching spark://192.168.0.3:60266/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp11669552979581146271.tmp
+25/11/20 23:14:58 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp11669552979581146271.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar
+25/11/20 23:14:58 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar to class loader default
+25/11/20 23:14:58 INFO Executor: Fetching spark://192.168.0.3:60266/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1763660696984
+25/11/20 23:14:58 INFO Utils: Fetching spark://192.168.0.3:60266/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp1301659428253704986.tmp
+25/11/20 23:14:58 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp1301659428253704986.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar
+25/11/20 23:14:58 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar to class loader default
+25/11/20 23:14:58 INFO Executor: Fetching spark://192.168.0.3:60266/jars/org.apache.hive_hive-storage-api-2.8.1.jar with timestamp 1763660696984
+25/11/20 23:14:58 INFO Utils: Fetching spark://192.168.0.3:60266/jars/org.apache.hive_hive-storage-api-2.8.1.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp9599199017401580108.tmp
+25/11/20 23:14:58 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp9599199017401580108.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hive_hive-storage-api-2.8.1.jar
+25/11/20 23:14:58 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.apache.hive_hive-storage-api-2.8.1.jar to class loader default
+25/11/20 23:14:58 INFO Executor: Fetching spark://192.168.0.3:60266/jars/org.slf4j_slf4j-api-1.7.36.jar with timestamp 1763660696984
+25/11/20 23:14:58 INFO Utils: Fetching spark://192.168.0.3:60266/jars/org.slf4j_slf4j-api-1.7.36.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp3360776393081195583.tmp
+25/11/20 23:14:58 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp3360776393081195583.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.slf4j_slf4j-api-1.7.36.jar
+25/11/20 23:14:58 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/org.slf4j_slf4j-api-1.7.36.jar to class loader default
+25/11/20 23:14:58 INFO Executor: Fetching spark://192.168.0.3:60266/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1763660696984
+25/11/20 23:14:58 INFO Utils: Fetching spark://192.168.0.3:60266/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp196981038648398862.tmp
+25/11/20 23:14:58 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/fetchFileTemp196981038648398862.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar
+25/11/20 23:14:58 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-2c2fbd18-6f23-49b8-a10a-f9c4bcb8de40/userFiles-a9fb0799-a621-4f0e-aac9-73bca2ef1956/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar to class loader default
+25/11/20 23:14:58 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 60269.
+25/11/20 23:14:58 INFO NettyBlockTransferService: Server created on 192.168.0.3:60269
+25/11/20 23:14:58 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+25/11/20 23:14:58 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 192.168.0.3, 60269, None)
+25/11/20 23:14:58 INFO BlockManagerMasterEndpoint: Registering block manager 192.168.0.3:60269 with 434.4 MiB RAM, BlockManagerId(driver, 192.168.0.3, 60269, None)
+25/11/20 23:14:58 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 192.168.0.3, 60269, None)
+25/11/20 23:14:58 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 192.168.0.3, 60269, None)
+
+===== RUNNING COMPANY ONLY =====
+
+==============================
+   COMPANY RECOMMENDATION
+==============================
+[company] Using Hudi table path: file:/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/company_sales_hudi/run_date=2025-11-20_230548
+[company] Using Seller Catalog path: file:/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/seller_catalog_hudi/run_date=2025-11-20_230811
+Loaded company rows    : 1000000
+Loaded seller rows     : 1000000
+
+Company top-10 items per category:
++-------+------------------------+---------------+-------------------+------------+----------------------+
+|item_id|item_name               |category       |company_total_units|market_price|num_sellers_in_catalog|
++-------+------------------------+---------------+-------------------+------------+----------------------+
+|i258715|Samsung Galaxy S24 Ultra|Electronics    |2000.0             |571.96      |1                     |
+|i278994|H&m Cotton Shirt        |Apparel        |2000.0             |50553.66    |1                     |
+|i361142|Levis Denim Jacket      |Apparel        |2000.0             |86072.14    |1                     |
+|i432445|Apple Iphone 15 Pro     |Electronics    |2000.0             |142972.07   |1                     |
+|i576166|Levis Denim Jacket      |Apparel        |2000.0             |127858.9    |1                     |
+|i738183|Skechers Gowalk         |Footwear       |2000.0             |121224.63   |1                     |
+|i866737|Samsung Galaxy S24 Ultra|Electronics    |2000.0             |135630.32   |1                     |
+|i906330|Lg 7kg Washing Machine  |Home Appliances|2000.0             |17103.1     |1                     |
+|i921126|Zara Maxi Dress         |Apparel        |2000.0             |37219.67    |1                     |
+|i972403|Apple Iphone 15 Pro     |Electronics    |2000.0             |86990.8     |1                     |
++-------+------------------------+---------------+-------------------+------------+----------------------+
+
+
+[company] Global Top-10 items (across all categories):
++-------+------------------------+---------------+-------------------+------------+----------------------+
+|item_id|item_name               |category       |company_total_units|market_price|num_sellers_in_catalog|
++-------+------------------------+---------------+-------------------+------------+----------------------+
+|i258715|Samsung Galaxy S24 Ultra|Electronics    |2000.0             |571.96      |1                     |
+|i278994|H&m Cotton Shirt        |Apparel        |2000.0             |50553.66    |1                     |
+|i361142|Levis Denim Jacket      |Apparel        |2000.0             |86072.14    |1                     |
+|i432445|Apple Iphone 15 Pro     |Electronics    |2000.0             |142972.07   |1                     |
+|i576166|Levis Denim Jacket      |Apparel        |2000.0             |127858.9    |1                     |
+|i738183|Skechers Gowalk         |Footwear       |2000.0             |121224.63   |1                     |
+|i866737|Samsung Galaxy S24 Ultra|Electronics    |2000.0             |135630.32   |1                     |
+|i906330|Lg 7kg Washing Machine  |Home Appliances|2000.0             |17103.1     |1                     |
+|i921126|Zara Maxi Dress         |Apparel        |2000.0             |37219.67    |1                     |
+|i972403|Apple Iphone 15 Pro     |Electronics    |2000.0             |86990.8     |1                     |
++-------+------------------------+---------------+-------------------+------------+----------------------+
+
+[company] sellers_count=51, topn_count=10, candidate_pairs_total=510
+[COMPANY] Excluded pairs written to: /Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/clean/company/run_date=2025-11-20_231459/excluded_pairs
+
+Company - Excluded seller,item pairs
++-----------+---------+
+| seller_id | item_id |
++-----------+---------+
+| S104      | i972403 |
+| S106      | i906330 |
+| S111      | i738183 |
+| S117      | i921126 |
+| S123      | i576166 |
+| S125      | i278994 |
+| S133      | i258715 |
+| S142      | i432445 |
+| S143      | i866737 |
+| S149      | i361142 |
++-----------+---------+
+
+💾 Writing company recommendation → /Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/clean/company/run_date=2025-11-20_231459
+✔ Renamed part-00000-369d9663-5925-48b8-809f-77d64c2ce051-c000.csv → company_seller_recommendation.csv
+
+===== COMPANY RECOMMENDATION SUMMARY =====
+Total sellers                 : 51
+Total categories              : 4
+Top-N items per category      : 4
+Theoretical total combinations     : 510 (= 51 × 4 × 4)
+Seller–item pairs removed (dupes) : 10
+Total recommendations written : 500
+Total company top items    : 10
+Avg recommendations per seller: 9.80
+
+Sample recommendations (up to 20):
++---------+-------+------------------------+-----------+------------+-------------------+----------------+
+|seller_id|item_id|item_name               |category   |market_price|expected_units_sold|expected_revenue|
++---------+-------+------------------------+-----------+------------+-------------------+----------------+
+|S100     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S108     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S110     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S115     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S116     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S123     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S125     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S131     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S136     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S145     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S117     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S119     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S142     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S148     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S149     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S104     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S109     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S118     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S130     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
+|S132     |i258715|Samsung Galaxy S24 Ultra|Electronics|571.96      |2000.0             |1143920.0       |
++---------+-------+------------------------+-----------+------------+-------------------+----------------+
+only showing top 20 rows
+
+
+===== RUNNING COMPETITOR ONLY =====
+
+==============================
+ COMPETITOR RECOMMENDATION
+==============================
+[competitor] Using Hudi path: file:/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/competitor_sales_hudi/run_date=2025-11-20_230909
+[competitor] Using Seller Catalog path: file:/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/seller_catalog_hudi/run_date=2025-11-20_230811
+Loaded competitor rows : 1000000
+Loaded seller rows     : 1000000
+
+Competitor top-10 items per category:
++--------+--------------------------+---------------+----------------+------------+----------------------+
+|item_id |item_name                 |category       |comp_total_units|market_price|num_sellers_in_catalog|
++--------+--------------------------+---------------+----------------+------------+----------------------+
+|i1009057|Dyson Vacuum Cleaner      |Home Appliances|3000.0          |93801.61    |1                     |
+|i165500 |Boat Smartwatch           |Electronics    |3000.0          |140722.39   |1                     |
+|i223177 |Lg 7kg Washing Machine    |Home Appliances|3000.0          |69554.75    |1                     |
+|i24910  |Nike Air Zoom Pegasus     |Footwear       |3000.0          |21874.84    |1                     |
+|i45893  |Lg 7kg Washing Machine    |Home Appliances|3000.0          |104621.95   |1                     |
+|i649773 |Samsung 55” Smart Tv      |Home Appliances|3000.0          |124075.29   |1                     |
+|i694658 |Puma Running Shoes        |Footwear       |3000.0          |128193.02   |1                     |
+|i707930 |U.s. Polo T-shirt         |Apparel        |3000.0          |115369.08   |1                     |
+|i749169 |Apple Iphone 15 Pro       |Electronics    |3000.0          |77020.21    |1                     |
+|i967956 |Sony Wh-1000xm5 Headphones|Electronics    |3000.0          |86405.28    |1                     |
++--------+--------------------------+---------------+----------------+------------+----------------------+
+
+
+[competitor] Global Top-10 competitor items:
++--------+--------------------------+---------------+----------------+------------+----------------------+
+|item_id |item_name                 |category       |comp_total_units|market_price|num_sellers_in_catalog|
++--------+--------------------------+---------------+----------------+------------+----------------------+
+|i1009057|Dyson Vacuum Cleaner      |Home Appliances|3000.0          |93801.61    |1                     |
+|i165500 |Boat Smartwatch           |Electronics    |3000.0          |140722.39   |1                     |
+|i223177 |Lg 7kg Washing Machine    |Home Appliances|3000.0          |69554.75    |1                     |
+|i24910  |Nike Air Zoom Pegasus     |Footwear       |3000.0          |21874.84    |1                     |
+|i45893  |Lg 7kg Washing Machine    |Home Appliances|3000.0          |104621.95   |1                     |
+|i649773 |Samsung 55” Smart Tv      |Home Appliances|3000.0          |124075.29   |1                     |
+|i694658 |Puma Running Shoes        |Footwear       |3000.0          |128193.02   |1                     |
+|i707930 |U.s. Polo T-shirt         |Apparel        |3000.0          |115369.08   |1                     |
+|i749169 |Apple Iphone 15 Pro       |Electronics    |3000.0          |77020.21    |1                     |
+|i967956 |Sony Wh-1000xm5 Headphones|Electronics    |3000.0          |86405.28    |1                     |
++--------+--------------------------+---------------+----------------+------------+----------------------+
+
+[competitor] sellers_count=51, topn_count=10, candidate_pairs_total=510
+
+Competitor - Excluded seller,item pairs
++-----------+----------+
+| seller_id | item_id  |
++-----------+----------+
+| S100      | i749169  |
+| S103      | i707930  |
+| S121      | i1009057 |
+| S121      | i165500  |
+| S121      | i223177  |
+| S131      | i24910   |
+| S132      | i967956  |
+| S138      | i694658  |
+| S146      | i45893   |
+| S146      | i649773  |
++-----------+----------+
+[competitor] missing_count=500, already_have_pairs_removed=10
+[competitor] distinct_sellers=51, distinct_categories=4
+[competitor] final_recommendations=500, avg_rows_per_seller=9.80
+
+💾 Writing competitor recommendation → /Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/clean/competitor/run_date=2025-11-20_231514
+✔ Renamed part-00000-bc92e404-35e9-41fc-9e8e-0b788db2f36a-c000.csv → competitor_seller_recommendation.csv
+
+===== COMPETITOR RECOMMENDATION SUMMARY =====
+Total sellers                 : 51
+Total categories              : 4
+Top-N items per category      : 4
+Theoretical total combinations     : 510 (= 51 × 4 × 4)
+Seller–item pairs removed (dupes) : 10
+Total recommendations written : 500
+Total company top items    : 10
+Avg recommendations per seller: 9.80
+
+Sample recommendations (up to 20):
++---------+--------+--------------------+---------------+------------+-------------------+----------------+
+|seller_id|item_id |item_name           |category       |market_price|expected_units_sold|expected_revenue|
++---------+--------+--------------------+---------------+------------+-------------------+----------------+
+|S100     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S108     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S110     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S115     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S116     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S123     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S125     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S131     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S136     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S145     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S117     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S119     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S142     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S148     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S149     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S104     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S109     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S118     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S130     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
+|S132     |i1009057|Dyson Vacuum Cleaner|Home Appliances|93801.61    |3000.0             |2.8140483E8     |
++---------+--------+--------------------+---------------+------------+-------------------+----------------+
+only showing top 20 rows
+
+==============================
+ ALL RECOMMENDATIONS COMPLETE
+==============================
+Company metrics   : {'total_sellers': 51, 'top_items': 10, 'recommendations': 500, 'null_price_count': 0, 'null_itemname_count': 0}
+Competitor metrics: {'total_sellers': 51, 'top_items': 10, 'recommendations': 500, 'null_price_count': 0, 'null_itemname_count': 0}
+[TIMER] JOB finished at: 2025-11-20 23:15:25.282003, Duration: 28.37 seconds
+-----------------------------------------------------
+ ✅ Seller Catalog ETL Completed Successfully at Thu Nov 20 23:15:25 IST 2025
+=====================================================
+
+                                            ------------------------------------------------
+(.venv) YUIOP@HQN473V4C2 DSP_GA_2025em1100102_20112025 % ./2025em1100102/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh
+=====================================================
+ 🚀 Running Consumption Recommendation via Spark Submit
+=====================================================
+Timestamp: Thu Nov 20 23:11:04 IST 2025
+PWD: /Users/YUIOP/Desktop/Workspace/DSP_GA_2025em1100102_20112025
+-----------------------------------------------------
+:: loading settings :: url = jar:file:/Users/YUIOP/Desktop/Workspace/DSP_GA_2025em1100102_20112025/.venv/lib/python3.13/site-packages/pyspark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+Ivy Default Cache set to: /Users/YUIOP/.ivy2/cache
+The jars for the packages stored in: /Users/YUIOP/.ivy2/jars
+org.apache.hudi#hudi-spark3.5-bundle_2.12 added as a dependency
+org.apache.hadoop#hadoop-aws added as a dependency
+com.amazonaws#aws-java-sdk-bundle added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-7f1267c5-d301-4ece-b494-68755c75af19;1.0
+        confs: [default]
+        found org.apache.hudi#hudi-spark3.5-bundle_2.12;0.15.0 in central
+        found org.apache.hive#hive-storage-api;2.8.1 in central
+        found org.slf4j#slf4j-api;1.7.36 in local-m2-cache
+        found org.apache.hadoop#hadoop-aws;3.3.4 in central
+        found com.amazonaws#aws-java-sdk-bundle;1.12.262 in central
+        found org.wildfly.openssl#wildfly-openssl;1.0.7.Final in central
+:: resolution report :: resolve 115ms :: artifacts dl 39ms
+        :: modules in use:
+        com.amazonaws#aws-java-sdk-bundle;1.12.262 from central in [default]
+        org.apache.hadoop#hadoop-aws;3.3.4 from central in [default]
+        org.apache.hive#hive-storage-api;2.8.1 from central in [default]
+        org.apache.hudi#hudi-spark3.5-bundle_2.12;0.15.0 from central in [default]
+        org.slf4j#slf4j-api;1.7.36 from local-m2-cache in [default]
+        org.wildfly.openssl#wildfly-openssl;1.0.7.Final from central in [default]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   6   |   0   |   0   |   0   ||   6   |   0   |
+        ---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-7f1267c5-d301-4ece-b494-68755c75af19
+        confs: [default]
+        0 artifacts copied, 6 already retrieved (0kB/8ms)
+25/11/20 23:11:06 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[TIMER] JOB started at: 2025-11-20 23:11:07.695992
+25/11/20 23:11:07 INFO SparkContext: Running Spark version 3.5.2
+25/11/20 23:11:07 INFO SparkContext: OS info Mac OS X, 15.7.1, aarch64
+25/11/20 23:11:07 INFO SparkContext: Java version 21.0.6
+25/11/20 23:11:07 INFO ResourceUtils: ==============================================================
+25/11/20 23:11:07 INFO ResourceUtils: No custom resources configured for spark.driver.
+25/11/20 23:11:07 INFO ResourceUtils: ==============================================================
+25/11/20 23:11:07 INFO SparkContext: Submitted application: ConsumptionRecommendation
+25/11/20 23:11:07 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+25/11/20 23:11:07 INFO ResourceProfile: Limiting resource is cpu
+25/11/20 23:11:07 INFO ResourceProfileManager: Added ResourceProfile id: 0
+25/11/20 23:11:07 INFO SecurityManager: Changing view acls to: YUIOP
+25/11/20 23:11:07 INFO SecurityManager: Changing modify acls to: YUIOP
+25/11/20 23:11:07 INFO SecurityManager: Changing view acls groups to: 
+25/11/20 23:11:07 INFO SecurityManager: Changing modify acls groups to: 
+25/11/20 23:11:07 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: YUIOP; groups with view permissions: EMPTY; users with modify permissions: YUIOP; groups with modify permissions: EMPTY
+25/11/20 23:11:07 INFO Utils: Successfully started service 'sparkDriver' on port 60199.
+25/11/20 23:11:07 INFO SparkEnv: Registering MapOutputTracker
+25/11/20 23:11:07 INFO SparkEnv: Registering BlockManagerMaster
+25/11/20 23:11:07 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+25/11/20 23:11:07 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+25/11/20 23:11:07 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+25/11/20 23:11:07 INFO DiskBlockManager: Created local directory at /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/blockmgr-cf6f6468-c1f9-499d-89e4-935317a22b5a
+25/11/20 23:11:07 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+25/11/20 23:11:07 INFO SparkEnv: Registering OutputCommitCoordinator
+25/11/20 23:11:08 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+25/11/20 23:11:08 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+25/11/20 23:11:08 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar at spark://192.168.0.3:60199/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar at spark://192.168.0.3:60199/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar at spark://192.168.0.3:60199/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar at spark://192.168.0.3:60199/jars/org.apache.hive_hive-storage-api-2.8.1.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar at spark://192.168.0.3:60199/jars/org.slf4j_slf4j-api-1.7.36.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO SparkContext: Added JAR file:///Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar at spark://192.168.0.3:60199/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar at file:///Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar
+25/11/20 23:11:08 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar at file:///Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hadoop_hadoop-aws-3.3.4.jar
+25/11/20 23:11:08 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar at file:///Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar
+25/11/20 23:11:08 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar at file:///Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hive_hive-storage-api-2.8.1.jar
+25/11/20 23:11:08 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar at file:///Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.slf4j_slf4j-api-1.7.36.jar
+25/11/20 23:11:08 INFO SparkContext: Added file file:///Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar at file:///Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: Copying /Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar
+25/11/20 23:11:08 INFO Executor: Starting executor ID driver on host 192.168.0.3
+25/11/20 23:11:08 INFO Executor: OS info Mac OS X, 15.7.1, aarch64
+25/11/20 23:11:08 INFO Executor: Java version 21.0.6
+25/11/20 23:11:08 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+25/11/20 23:11:08 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@33fa25b7 for default.
+25/11/20 23:11:08 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: /Users/YUIOP/.ivy2/jars/org.slf4j_slf4j-api-1.7.36.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.slf4j_slf4j-api-1.7.36.jar
+25/11/20 23:11:08 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: /Users/YUIOP/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hadoop_hadoop-aws-3.3.4.jar
+25/11/20 23:11:08 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: /Users/YUIOP/.ivy2/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar
+25/11/20 23:11:08 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: /Users/YUIOP/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar
+25/11/20 23:11:08 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: /Users/YUIOP/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar
+25/11/20 23:11:08 INFO Executor: Fetching file:///Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: /Users/YUIOP/.ivy2/jars/org.apache.hive_hive-storage-api-2.8.1.jar has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hive_hive-storage-api-2.8.1.jar
+25/11/20 23:11:08 INFO Executor: Fetching spark://192.168.0.3:60199/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO TransportClientFactory: Successfully created connection to /192.168.0.3:60199 after 11 ms (0 ms spent in bootstraps)
+25/11/20 23:11:08 INFO Utils: Fetching spark://192.168.0.3:60199/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp4204024920979283723.tmp
+25/11/20 23:11:08 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp4204024920979283723.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar
+25/11/20 23:11:08 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar to class loader default
+25/11/20 23:11:08 INFO Executor: Fetching spark://192.168.0.3:60199/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1763660467755
+25/11/20 23:11:08 INFO Utils: Fetching spark://192.168.0.3:60199/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp9254493344264890528.tmp
+25/11/20 23:11:09 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp9254493344264890528.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar
+25/11/20 23:11:09 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar to class loader default
+25/11/20 23:11:09 INFO Executor: Fetching spark://192.168.0.3:60199/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar with timestamp 1763660467755
+25/11/20 23:11:09 INFO Utils: Fetching spark://192.168.0.3:60199/jars/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp1276800690223245356.tmp
+25/11/20 23:11:09 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp1276800690223245356.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar
+25/11/20 23:11:09 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hudi_hudi-spark3.5-bundle_2.12-0.15.0.jar to class loader default
+25/11/20 23:11:09 INFO Executor: Fetching spark://192.168.0.3:60199/jars/org.slf4j_slf4j-api-1.7.36.jar with timestamp 1763660467755
+25/11/20 23:11:09 INFO Utils: Fetching spark://192.168.0.3:60199/jars/org.slf4j_slf4j-api-1.7.36.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp13589000860262655956.tmp
+25/11/20 23:11:09 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp13589000860262655956.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.slf4j_slf4j-api-1.7.36.jar
+25/11/20 23:11:09 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.slf4j_slf4j-api-1.7.36.jar to class loader default
+25/11/20 23:11:09 INFO Executor: Fetching spark://192.168.0.3:60199/jars/org.apache.hive_hive-storage-api-2.8.1.jar with timestamp 1763660467755
+25/11/20 23:11:09 INFO Utils: Fetching spark://192.168.0.3:60199/jars/org.apache.hive_hive-storage-api-2.8.1.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp14371957616235863453.tmp
+25/11/20 23:11:09 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp14371957616235863453.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hive_hive-storage-api-2.8.1.jar
+25/11/20 23:11:09 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hive_hive-storage-api-2.8.1.jar to class loader default
+25/11/20 23:11:09 INFO Executor: Fetching spark://192.168.0.3:60199/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1763660467755
+25/11/20 23:11:09 INFO Utils: Fetching spark://192.168.0.3:60199/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp12352208546438631572.tmp
+25/11/20 23:11:09 INFO Utils: /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/fetchFileTemp12352208546438631572.tmp has been previously copied to /private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hadoop_hadoop-aws-3.3.4.jar
+25/11/20 23:11:09 INFO Executor: Adding file:/private/var/folders/65/n_cnt7490_945xg9_rp3fwl40000gr/T/spark-f0d3501b-5cfd-4553-ba6b-38f52d473e0b/userFiles-bc48ea38-8b42-4ff0-a807-9ce9a3180333/org.apache.hadoop_hadoop-aws-3.3.4.jar to class loader default
+25/11/20 23:11:09 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 60202.
+25/11/20 23:11:09 INFO NettyBlockTransferService: Server created on 192.168.0.3:60202
+25/11/20 23:11:09 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+25/11/20 23:11:09 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 192.168.0.3, 60202, None)
+25/11/20 23:11:09 INFO BlockManagerMasterEndpoint: Registering block manager 192.168.0.3:60202 with 434.4 MiB RAM, BlockManagerId(driver, 192.168.0.3, 60202, None)
+25/11/20 23:11:09 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 192.168.0.3, 60202, None)
+25/11/20 23:11:09 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 192.168.0.3, 60202, None)
+
+===== RUNNING COMPANY ONLY =====
+
+==============================
+   COMPANY RECOMMENDATION
+==============================
+[company] Using Hudi table path: file:/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/company_sales_hudi/run_date=2025-11-20_230548
+[company] Using Seller Catalog path: file:/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/seller_catalog_hudi/run_date=2025-11-20_230811
+Loaded company rows    : 1000000
+Loaded seller rows     : 1000000
+
+Company top-10 items per category:
++--------+--------------------------+-----------+-------------------+------------+----------------------+
+|item_id |item_name                 |category   |company_total_units|market_price|num_sellers_in_catalog|
++--------+--------------------------+-----------+-------------------+------------+----------------------+
+|i115887 |Levis Denim Jacket        |Apparel    |2000.0             |37104.23    |1                     |
+|i278994 |H&m Cotton Shirt          |Apparel    |2000.0             |50553.66    |1                     |
+|i361142 |Levis Denim Jacket        |Apparel    |2000.0             |86072.14    |1                     |
+|i433008 |Zara Maxi Dress           |Apparel    |2000.0             |97267.51    |1                     |
+|i512211 |Zara Maxi Dress           |Apparel    |2000.0             |11880.67    |1                     |
+|i576166 |Levis Denim Jacket        |Apparel    |2000.0             |127858.9    |1                     |
+|i692314 |Zara Maxi Dress           |Apparel    |2000.0             |48875.47    |1                     |
+|i805764 |U.s. Polo T-shirt         |Apparel    |2000.0             |6360.37     |1                     |
+|i893592 |Allen Solly Formal Pants  |Apparel    |2000.0             |10283.65    |1                     |
+|i921126 |Zara Maxi Dress           |Apparel    |2000.0             |37219.67    |1                     |
+|i110843 |Apple Iphone 15 Pro       |Electronics|2000.0             |138793.53   |1                     |
+|i253371 |Sony Wh-1000xm5 Headphones|Electronics|2000.0             |126290.89   |1                     |
+|i258715 |Samsung Galaxy S24 Ultra  |Electronics|2000.0             |571.96      |1                     |
+|i432445 |Apple Iphone 15 Pro       |Electronics|2000.0             |142972.07   |1                     |
+|i442648 |Apple Iphone 15 Pro       |Electronics|2000.0             |70608.62    |1                     |
+|i48574  |Sony Wh-1000xm5 Headphones|Electronics|2000.0             |140298.85   |1                     |
+|i674024 |Apple Iphone 15 Pro       |Electronics|2000.0             |74202.58    |1                     |
+|i797665 |Boat Smartwatch           |Electronics|2000.0             |56008.55    |1                     |
+|i866737 |Samsung Galaxy S24 Ultra  |Electronics|2000.0             |135630.32   |1                     |
+|i972403 |Apple Iphone 15 Pro       |Electronics|2000.0             |86990.8     |1                     |
+|i1007544|Adidas Ultraboost 23      |Footwear   |2000.0             |83104.95    |1                     |
+|i148287 |Nike Air Zoom Pegasus     |Footwear   |2000.0             |14706.96    |1                     |
+|i352383 |Adidas Ultraboost 23      |Footwear   |2000.0             |48166.92    |1                     |
+|i612157 |Puma Running Shoes        |Footwear   |2000.0             |76208.33    |1                     |
+|i738183 |Skechers Gowalk           |Footwear   |2000.0             |121224.63   |1                     |
+|i792174 |Skechers Gowalk           |Footwear   |2000.0             |7014.4      |1                     |
+|i833225 |Skechers Gowalk           |Footwear   |2000.0             |42710.16    |1                     |
+|i868919 |Puma Running Shoes        |Footwear   |2000.0             |129078.0    |1                     |
+|i955368 |Puma Running Shoes        |Footwear   |2000.0             |2269.85     |1                     |
+|i978315 |Adidas Ultraboost 23      |Footwear   |2000.0             |126754.67   |1                     |
++--------+--------------------------+-----------+-------------------+------------+----------------------+
+only showing top 30 rows
+
+
+[company] Top-N per category (category -> count):
++---------------+-----+
+|category       |count|
++---------------+-----+
+|Apparel        |10   |
+|Electronics    |10   |
+|Footwear       |10   |
+|Home Appliances|10   |
++---------------+-----+
+
+[company] sellers_count=51, topn_count=40, candidate_pairs_total=2040
+[COMPANY] Excluded pairs written to: /Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/clean/company/run_date=2025-11-20_231110/excluded_pairs
+
+Company - Excluded seller,item pairs
++-----------+----------+
+| seller_id | item_id  |
++-----------+----------+
+| S102      | i442648  |
+| S102      | i692314  |
+| S103      | i944321  |
+| S104      | i972403  |
+| S106      | i906330  |
+| S107      | i612157  |
+| S109      | i940907  |
+| S111      | i738183  |
+| S113      | i805764  |
+| S114      | i627410  |
+| S115      | i110843  |
+| S117      | i674024  |
+| S117      | i921126  |
+| S118      | i955368  |
+| S122      | i115887  |
+| S122      | i978315  |
+| S123      | i190429  |
+| S123      | i576166  |
+| S124      | i512211  |
+| S125      | i278994  |
+| S126      | i433008  |
+| S127      | i893592  |
+| S130      | i772682  |
+| S131      | i833225  |
+| S133      | i258715  |
+| S133      | i48574   |
+| S134      | i352383  |
+| S134      | i792174  |
+| S136      | i27176   |
+| S138      | i797665  |
+| S138      | i894726  |
+| S139      | i828040  |
+| S142      | i432445  |
+| S143      | i866737  |
+| S145      | i253371  |
+| S145      | i868919  |
+| S148      | i1007544 |
+| S149      | i361142  |
+| S149      | i959967  |
+| S150      | i148287  |
++-----------+----------+
+
+💾 Writing company recommendation → /Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/clean/company/run_date=2025-11-20_231110
+✔ Renamed part-00000-96701fd9-7f82-470f-94c6-c1da1dd0e201-c000.csv → company_seller_recommendation.csv
+
+===== COMPANY RECOMMENDATION SUMMARY =====
+Total sellers                 : 51
+Total categories              : 4
+Top-N items per category      : 10
+Theoretical total combinations     : 2040 (= 51 × 4 × 10)
+Seller–item pairs removed (dupes) : 40
+Total recommendations written : 2000
+Total company top items    : 40
+Avg recommendations per seller: 39.22
+
+Sample recommendations (up to 20):
++---------+--------+--------------------+--------+------------+-------------------+----------------+
+|seller_id|item_id |item_name           |category|market_price|expected_units_sold|expected_revenue|
++---------+--------+--------------------+--------+------------+-------------------+----------------+
+|S100     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S108     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S110     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S115     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S116     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S123     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S125     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S131     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S136     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S145     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S117     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S119     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S142     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S149     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S104     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S109     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S118     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S130     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S132     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
+|S134     |i1007544|Adidas Ultraboost 23|Footwear|83104.95    |2000.0             |1.662099E8      |
++---------+--------+--------------------+--------+------------+-------------------+----------------+
+only showing top 20 rows
+
+
+===== RUNNING COMPETITOR ONLY =====
+
+==============================
+ COMPETITOR RECOMMENDATION
+==============================
+[competitor] Using Hudi path: file:/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/competitor_sales_hudi/run_date=2025-11-20_230909
+[competitor] Using Seller Catalog path: file:/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/seller_catalog_hudi/run_date=2025-11-20_230811
+Loaded competitor rows : 1000000
+Loaded seller rows     : 1000000
+
+Competitor top-10 items per category:
++-------+--------------------------+-----------+----------------+------------+----------------------+
+|item_id|item_name                 |category   |comp_total_units|market_price|num_sellers_in_catalog|
++-------+--------------------------+-----------+----------------+------------+----------------------+
+|i315881|U.s. Polo T-shirt         |Apparel    |3000.0          |59167.98    |1                     |
+|i332722|Levis Denim Jacket        |Apparel    |3000.0          |139113.47   |1                     |
+|i352850|Zara Maxi Dress           |Apparel    |3000.0          |91473.77    |1                     |
+|i460951|U.s. Polo T-shirt         |Apparel    |3000.0          |96635.25    |1                     |
+|i489631|Zara Maxi Dress           |Apparel    |3000.0          |24626.85    |1                     |
+|i522743|Levis Denim Jacket        |Apparel    |3000.0          |119654.9    |1                     |
+|i704832|H&m Cotton Shirt          |Apparel    |3000.0          |135314.98   |1                     |
+|i707930|U.s. Polo T-shirt         |Apparel    |3000.0          |115369.08   |1                     |
+|i756753|H&m Cotton Shirt          |Apparel    |3000.0          |41178.46    |1                     |
+|i93817 |Levis Denim Jacket        |Apparel    |3000.0          |13167.56    |1                     |
+|i165500|Boat Smartwatch           |Electronics|3000.0          |140722.39   |1                     |
+|i290553|Samsung Galaxy S24 Ultra  |Electronics|3000.0          |96024.58    |1                     |
+|i290797|Sony Wh-1000xm5 Headphones|Electronics|3000.0          |130340.76   |1                     |
+|i360333|Boat Smartwatch           |Electronics|3000.0          |15531.7     |1                     |
+|i407744|Apple Iphone 15 Pro       |Electronics|3000.0          |147759.72   |1                     |
+|i529677|Boat Smartwatch           |Electronics|3000.0          |77356.1     |1                     |
+|i666102|Boat Smartwatch           |Electronics|3000.0          |54208.64    |1                     |
+|i749169|Apple Iphone 15 Pro       |Electronics|3000.0          |77020.21    |1                     |
+|i82568 |Boat Smartwatch           |Electronics|3000.0          |100559.24   |1                     |
+|i967956|Sony Wh-1000xm5 Headphones|Electronics|3000.0          |86405.28    |1                     |
+|i110450|Nike Air Zoom Pegasus     |Footwear   |3000.0          |140825.51   |1                     |
+|i222803|Adidas Ultraboost 23      |Footwear   |3000.0          |13253.77    |1                     |
+|i227486|Reebok Nano X4            |Footwear   |3000.0          |91324.73    |1                     |
+|i24910 |Nike Air Zoom Pegasus     |Footwear   |3000.0          |21874.84    |1                     |
+|i417557|Reebok Nano X4            |Footwear   |3000.0          |121147.75   |1                     |
+|i488023|Nike Air Zoom Pegasus     |Footwear   |3000.0          |64297.85    |1                     |
+|i546335|Skechers Gowalk           |Footwear   |3000.0          |16836.78    |1                     |
+|i595297|Reebok Nano X4            |Footwear   |3000.0          |93234.45    |1                     |
+|i599101|Skechers Gowalk           |Footwear   |3000.0          |114991.83   |1                     |
+|i694658|Puma Running Shoes        |Footwear   |3000.0          |128193.02   |1                     |
++-------+--------------------------+-----------+----------------+------------+----------------------+
+only showing top 30 rows
+
+
+[competitor] Top-N per category (category -> count):
++---------------+-----+
+|category       |count|
++---------------+-----+
+|Apparel        |10   |
+|Electronics    |10   |
+|Footwear       |10   |
+|Home Appliances|10   |
++---------------+-----+
+
+[competitor] sellers_count=51, topn_count=40, candidate_pairs_total=2040
+
+Competitor - Excluded seller,item pairs
++-----------+----------+
+| seller_id | item_id  |
++-----------+----------+
+| S100      | i749169  |
+| S102      | i595297  |
+| S103      | i707930  |
+| S106      | i227486  |
+| S106      | i666102  |
+| S108      | i332722  |
+| S109      | i82568   |
+| S110      | i407744  |
+| S110      | i93817   |
+| S112      | i290553  |
+| S115      | i756753  |
+| S121      | i1009057 |
+| S121      | i165500  |
+| S121      | i223177  |
+| S124      | i315881  |
+| S125      | i489631  |
+| S125      | i522743  |
+| S126      | i736704  |
+| S128      | i501464  |
+| S129      | i290797  |
+| S129      | i417557  |
+| S131      | i24910   |
+| S132      | i599101  |
+| S132      | i704832  |
+| S132      | i967956  |
+| S134      | i110450  |
+| S135      | i460951  |
+| S137      | i222803  |
+| S138      | i694658  |
+| S139      | i360333  |
+| S145      | i195863  |
+| S146      | i352850  |
+| S146      | i45893   |
+| S146      | i546335  |
+| S146      | i649773  |
+| S146      | i990070  |
+| S147      | i239445  |
+| S147      | i529677  |
+| S147      | i771654  |
+| S148      | i488023  |
++-----------+----------+
+[competitor] missing_count=2000, already_have_pairs_removed=40
+[competitor] distinct_sellers=51, distinct_categories=4
+[competitor] final_recommendations=2000, avg_rows_per_seller=39.22
+
+💾 Writing competitor recommendation → /Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/clean/competitor/run_date=2025-11-20_231127
+✔ Renamed part-00000-c95b4d65-94df-4181-8b7b-baa317712519-c000.csv → competitor_seller_recommendation.csv
+
+===== COMPETITOR RECOMMENDATION SUMMARY =====
+Total sellers                 : 51
+Total categories              : 4
+Top-N items per category      : 10
+Theoretical total combinations     : 2040 (= 51 × 4 × 10)
+Seller–item pairs removed (dupes) : 40
+Total recommendations written : 2000
+Total company top items    : 40
+Avg recommendations per seller: 39.22
+
+Sample recommendations (up to 20):
++---------+-------+---------------------+--------+------------+-------------------+----------------+
+|seller_id|item_id|item_name            |category|market_price|expected_units_sold|expected_revenue|
++---------+-------+---------------------+--------+------------+-------------------+----------------+
+|S100     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S108     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S110     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S115     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S116     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S123     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S125     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S131     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S136     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S145     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S117     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S119     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S142     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S148     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S149     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S104     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S109     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S118     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S130     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
+|S132     |i110450|Nike Air Zoom Pegasus|Footwear|140825.51   |3000.0             |4.2247653E8     |
++---------+-------+---------------------+--------+------------+-------------------+----------------+
+only showing top 20 rows
+
+
+==============================
+ ALL RECOMMENDATIONS COMPLETE
+==============================
+Company metrics   : {'total_sellers': 51, 'top_items': 40, 'recommendations': 2000, 'null_price_count': 0, 'null_itemname_count': 0}
+Competitor metrics: {'total_sellers': 51, 'top_items': 40, 'recommendations': 2000, 'null_price_count': 0, 'null_itemname_count': 0}
+[TIMER] JOB finished at: 2025-11-20 23:11:38.937159, Duration: 31.24 seconds
+-----------------------------------------------------
+ ✅ Seller Catalog ETL Completed Successfully at Thu Nov 20 23:11:39 IST 2025
+=====================================================

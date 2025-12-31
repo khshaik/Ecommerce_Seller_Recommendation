@@ -1,0 +1,1 @@
+seller_id,item_id,units_sold,revenue,sale_date,marketplace_price,raw_item_id,raw_units_sold,raw_revenue,raw_sale_date,units_sold_filled,revenue_filled,revenue_derived,derived_rev,raw_date_malformed,sale_date_parsed,sale_date_final,sale_date_str,rn,dq_pass,dq_failure_reason

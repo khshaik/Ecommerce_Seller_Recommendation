@@ -1,0 +1,159 @@
+spark:
+  shuffle_partitions: 8
+  log_level: "WARN"
+  configs:
+    spark.sql.extensions: "io.delta.sql.DeltaSparkSessionExtension"
+    spark.sql.catalog.spark_catalog: "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+    spark.sql.adaptive.enabled: "true"
+    spark.hadoop.fs.s3a.impl: "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    spark.hadoop.fs.s3a.aws.credentials.provider: "com.amazonaws.auth.DefaultAWSCredentialsProviderChain"
+    spark.hadoop.fs.s3a.path.style.access: "true"
+    spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version: "2"
+    spark.hadoop.fs.s3a.connection.timeout: "60000"
+    spark.hadoop.fs.s3a.connection.establish.timeout: "5000"
+    spark.hadoop.fs.s3a.attempts.maximum: "5"
+
+#dirty
+#paths:
+  #input_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/input/raw/dirty"
+  #raw_company_sales_data:  "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/input/raw/dirty/company_sales/company_sales_dirty.csv"
+  #raw_competitor_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/input/raw/dirty/competitor_sales/competitor_sales_dirty.csv"
+  #raw_sellers_catalogue_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/input/raw/dirty/seller_catalog/seller_catalog_dirty.csv"
+
+  #output_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output"
+
+  #bronze_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/bronze/dirty"
+  #bronze_company_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/bronze/dirty/company_sales"
+  #bronze_sellers_catalogue_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/bronze/dirtye/seller_catalog"
+  #bronze_competitor_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/bronze/dirty/competitor_sales"
+
+  #quarantine_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/quarantine/dirty/"
+  #quarantine_company_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/quarantine/dirty/company_sales"
+  #quarantine_sellers_catalogue_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/quarantine/dirty/seller_catalog"
+  #quarantine_competitor_sales_data:    "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/quarantine/dirty/competitor_sales"
+
+  #silver_company_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/silver/dirty/company_sales"
+  #silver_sellers_catalogue_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/silver/dirty/seller_catalog"
+  #silver_competitor_sales_data:    "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/silver/dirty/competitor_sales"
+
+  #gold_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/processed/gold/dirty"
+  #gold_company_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/dirty/company_sales_hudi"
+  #gold_seller_catalog_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/dirty/seller_catalog_hudi"
+  #gold_competitor_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/dirty/competitor_sales_hudi"
+
+  #gold_recommendation_company_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/company"
+  #gold_recommendation_competitor_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/competitor"
+
+#clean
+paths:
+  input_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/input/raw/clean"
+  raw_company_sales_data:  "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/input/raw/clean/company_sales/company_sales_clean.csv"
+  raw_competitor_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/input/raw/clean/competitor_sales/competitor_sales_clean.csv"
+  raw_sellers_catalogue_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/input/raw/clean/seller_catalog/seller_catalog_clean.csv"
+
+  output_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output"
+
+  bronze_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/bronze/clean"
+  bronze_company_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/bronze/clean/company_sales"
+  bronze_sellers_catalogue_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/bronze/clean/seller_catalog"
+  bronze_competitor_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/bronze/clean/competitor_sales"
+
+  quarantine_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/quarantine/clean/"
+  quarantine_company_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/quarantine/clean/company_sales"
+  quarantine_sellers_catalogue_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/quarantine/clean/seller_catalog"
+  quarantine_competitor_sales_data:    "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/quarantine/clean/competitor_sales"
+
+  silver_company_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/silver/clean/company_sales"
+  silver_sellers_catalogue_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/silver/clean/seller_catalog"
+  silver_competitor_sales_data:    "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/silver/clean/competitor_sales"
+
+  gold_root: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/output/processed/gold/clean"
+  gold_company_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/company_sales_hudi"
+  gold_seller_catalog_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/seller_catalog_hudi"
+  gold_competitor_sales_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/gold/clean/competitor_sales_hudi"
+
+  gold_recommendation_company_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/clean/company"
+  gold_recommendation_competitor_data: "/Users/YUIOP/desktop/workspace/DSP_GA_2025em1100102_20112025/2025em1100102/ecommerce_seller_recommendation/local/processed/recommendations/clean/competitor"  
+
+tables:
+    company_sales_hudi_table: "company_sales_data"
+    competitor_sales_hudi_table: "competitor_sales_data"
+    seller_catalog_hudi_table: "seller_catalog_data"
+
+recommendation_files:
+  company_recommendation_file: "company_seller_recommendation.csv"
+  competitor_recommendation_file: "competitor_seller_recommendation.csv"
+    
+dq:
+  company_sales_data_required: ["product_id","name","category","price"]
+  product_price_min: 0.0
+
+  #sellers_catalogue_data_required: ["seller_id","item_id","item_name", "category", "marketplace_price", "stock_qty"]
+  #seller_catalog_numeric_checks: { marketplace_price: 0, stock_qty: 0 }
+  sellers_catalogue_data_required:
+    - seller_id
+    - item_id
+    - item_name
+    - category
+    - marketplace_price
+    - stock_qty
+
+  seller_catalog_numeric_checks:
+    marketplace_price: 0
+    stock_qty: 0
+
+  # ---------------------------
+  # COMPANY SALES DQ RULES
+  # ---------------------------
+  company_sales_required:
+    - item_id
+    - units_sold
+    - revenue
+    - sale_date
+
+  company_sales_numeric_checks:
+    units_sold_min: 0
+    revenue_min: 0
+
+  company_sales_date_checks:
+    max_date_today: true   # sale_date <= current_date()
+    allow_multiple_formats: true
+    allowed_formats:
+      - "dd/MM/yyyy"
+      - "dd/MM/yy"
+      - "yyyy-MM-dd"
+      - "dd-MM-yyyy"
+
+  # Derivation logic
+  revenue_derivation:
+    enable: true
+    price_column: "marketplace_price"
+    qty_column: "units_sold"
+
+  # Columns to fill with 0 when missing
+  fill_missing_with_zero:
+    - units_sold
+    - revenue
+
+  competitor_sales_data_required: ["order_id","customer_id","product_id","order_ts","qty","unit_price"]
+
+  order_status_allowed: ["PLACED","SHIPPED","CANCELLED","RETURNED","DELIVERED"]
+  qty_max: 10000
+  price_max: 100000.0
+
+  # ---------------------------
+  # COMPETITOR SALES DQ RULES
+  # ---------------------------
+  competitor_sales_numeric_checks:
+    units_sold_min: 0
+    revenue_min: 0
+    marketplace_price_min: 0
+
+  competitor_date_formats:
+    - "dd/MM/yyyy"
+    - "dd/MM/yy"
+    - "yyyy-MM-dd"
+    - "dd-MM-yyyy"
+
+consumption:
+  backfill_days: 7
