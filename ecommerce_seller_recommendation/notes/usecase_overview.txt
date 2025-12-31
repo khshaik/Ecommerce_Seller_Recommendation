@@ -1,0 +1,596 @@
+here’s the assignment, untangled and turned into a practical plan you can actually build this week.
+
+# What’s being asked (plain-English)
+
+* Build **3 ETL pipelines** (seller catalog, company sales, competitor sales) that **ingest → clean → validate → quarantine bad records → write clean data to Apache Hudi** (Bronze/Silver/Gold + a quarantine area). Your **final outputs are 3 Hudi tables**. 
+* Build a **consumption job** that reads those 3 Hudi tables, finds **the top-10 selling items**, compares with each seller’s catalog, and **recommends the missing items** per seller along with **market_price, expected_units_sold, expected_revenue**. Output a **CSV**.  
+* Use a **YAML config** for all input/output paths and follow the **project structure** shown in the PDF. Zip that folder for submission. 
+
+# The data you’ll handle (columns & keys)
+
+**Seller catalog** (key = seller_id + item_id): seller_id, item_id, item_name, category, marketplace_price, stock_qty. Clean types/casing, dedupe, non-negative price/stock, required fields. Failures → quarantine. 
+**Company sales** (key = item_id): item_id, units_sold, revenue, sale_date. Correct types, non-negative units/revenue, valid date ≤ today; fill missing numeric with 0; standardize dates. Failures → quarantine. 
+**Competitor sales** (key = seller_id + item_id): item_id, units_sold, revenue, marketplace_price, seller_id, sale_date with similar DQ rules (non-negative numeric, required keys/dates). Failures → quarantine. 
+
+**Quarantine record** must contain the **original record + dq_failure_reason** and indicate which input dataset it came from. 
+
+# Sample objects & how they relate
+
+Think of three tables joined by **item_id** (plus **seller_id** for seller/competitor):
+
+**Seller** (catalog)
+
+| seller_id | item_id | item_name    | category    | marketplace_price | stock_qty |
+| --------- | ------- | ------------ | ----------- | ----------------: | --------: |
+| S1        | I100    | iPhone 14    | Electronics |             699.0 |        12 |
+| S1        | I200    | Earbuds X    | Electronics |              29.0 |        50 |
+| S2        | I200    | Earbuds X    | Electronics |              27.5 |        35 |
+| S3        | I300    | Gaming Mouse | Electronics |              39.9 |        20 |
+
+**Company sales** (global sales across your platform)
+
+| item_id | units_sold |   revenue | sale_date  |
+| ------- | ---------: | --------: | ---------- |
+| I100    |      5,000 | 3,495,000 | 2025-10-15 |
+| I200    |     12,000 |   348,000 | 2025-10-16 |
+| I300    |      9,200 |   367,000 | 2025-10-16 |
+
+**Competitor sales** (market view for similar items)
+
+| seller_id | item_id | units_sold |   revenue | marketplace_price | sale_date  |
+| --------- | ------- | ---------: | --------: | ----------------: | ---------- |
+| C9        | I400    |     15,000 |   450,000 |              30.0 | 2025-10-16 |
+| C7        | I500    |      8,500 | 5,100,000 |             599.0 | 2025-10-16 |
+
+Relationships & keys: **seller_id+item_id** is the unique key in *seller catalog* and *competitor sales*; **item_id** is the key in *company sales*. These keys drive joins to detect what’s **missing per seller**. 
+
+# “Top-10 selling items” and the recommendation logic
+
+1. **Find top sellers**
+
+   * From **company sales**, aggregate by item (optionally per category) and **rank by units_sold** (you can break ties by revenue). The updated brief explicitly wants **top-10** selling items.  
+   * From **competitor sales**, do the same to understand market best-sellers. 
+
+2. **Find gaps per seller**
+
+   * For each seller, left-anti join their catalog with the union of “top-10 company items” and “top-10 competitor items” to get **missing items**. 
+
+3. **Compute business fields** for each missing item:
+
+   * **market_price**: take from competitor if present, else from your company data. 
+   * **expected_units_sold** = (total units sold for the item) ÷ (number of sellers selling the item). 
+   * **expected_revenue** = expected_units_sold × marketplace_price. 
+
+4. **Output CSV** with: seller_id, item_id, item_name, category, market_price, expected_units_sold, expected_revenue. 
+
+> Note: the PDFs say “aggregate to find top-selling items per category” and the updated one stresses “top-10 items”. If not specified further, choose **units_sold** as the primary ranking metric and document that choice in your README. 
+
+# End-to-end workflow (functional → technical)
+
+**Functional flow**
+
+1. **Ingest** 3 raw datasets from paths in `ecomm_prod.yml`. 
+2. **Clean & validate** with the DQ rules above; **bad → quarantine**, **good → Hudi tables** (Bronze/Silver/Gold as you prefer; the brief expects medallion + quarantine). 
+3. **Consume** the 3 Hudi tables to generate **top-10** sets, compute **recommendations**, write **CSV**. 
+
+**Technical flow (Spark + Hudi, YAML-driven)**
+
+* **Configs** (`configs/ecomm_prod.yml`) hold raw inputs, Hudi outputs, and final CSV path (S3 or local). 
+* **ETL scripts** (`src/etl_*.py`) each:
+
+  * Read raw path → cast/trim/standardize → **apply DQ** → **split** into `goodDF` and `badDF`.
+  * Write `badDF` to `quarantine/<dataset>/<dt>` with `dq_failure_reason`. 
+  * Write `goodDF` to **Hudi** with upsert semantics (record key = keys above). 
+* **Consumption** (`src/consumption_recommendation.py`):
+
+  * Read 3 Hudi tables → top-10 company + top-10 competitor → find per-seller gaps → compute fields → **overwrite** CSV. 
+
+**Project layout to submit**
+
+```
+<rollnumber>/ecommerce_seller_recommendation/<s3|local>/
+  configs/ecomm_prod.yml
+  src/
+    etl_seller_catalog.py
+    etl_company_sales.py
+    etl_competitor_sales.py
+    consumption_recommendation.py
+  scripts/
+    etl_seller_catalog_spark_submit.sh
+    etl_company_sales_spark_submit.sh
+    etl_competitor_sales_spark_submit.sh
+    consumption_recommendation_spark_submit.sh
+  README.md
+```
+
+(Exactly as in the handout.) 
+
+# Skeleton logic you can start from (PySpark)
+
+**ETL example (seller catalog)**
+
+```python
+df = spark.read.option("header", True).csv(cfg["seller_catalog"]["input_path"])
+
+# Clean
+from pyspark.sql import functions as F
+clean = (df
+  .withColumn("seller_id", F.trim(F.col("seller_id")))
+  .withColumn("item_id", F.trim(F.col("item_id")))
+  .withColumn("item_name", F.initcap(F.col("item_name")))
+  .withColumn("category", F.initcap(F.col("category")))
+  .withColumn("marketplace_price", F.col("marketplace_price").cast("double"))
+  .withColumn("stock_qty", F.col("stock_qty").cast("int"))
+  .dropDuplicates(["seller_id", "item_id"])
+)
+
+# DQ flags
+dq = (clean
+  .withColumn("dq_failure_reason", F.array_remove(F.array(
+      F.when(F.col("seller_id").isNull(), F.lit("missing_seller_id")),
+      F.when(F.col("item_id").isNull(), F.lit("missing_item_id")),
+      F.when(F.col("marketplace_price") < 0, F.lit("price_negative")),
+      F.when(F.col("stock_qty") < 0, F.lit("stock_negative")),
+      F.when(F.col("item_name").isNull(), F.lit("missing_item_name")),
+      F.when(F.col("category").isNull(), F.lit("missing_category"))
+  ), None))
+)
+good = dq.filter(F.size("dq_failure_reason") == 0).drop("dq_failure_reason")
+bad  = dq.filter(F.size("dq_failure_reason") > 0)
+
+# Write quarantine
+bad.withColumn("dataset", F.lit("seller_catalog")) \
+   .write.mode("append").json(quarantine_path)
+
+# Write Hudi (upsert)
+hudi_opts = {
+  "hoodie.table.name": "seller_catalog_hudi",
+  "hoodie.datasource.write.recordkey.field": "seller_id,item_id",
+  "hoodie.datasource.write.precombine.field": "marketplace_price",
+  "hoodie.datasource.write.operation": "upsert"
+}
+good.write.format("hudi").options(**hudi_opts).mode("append").save(cfg["seller_catalog"]["hudi_output_path"])
+```
+
+(Adjust keys/types and analogous DQ for company/competitor datasets per the rules above.) 
+
+**Consumption example (top-10 + recommendations)**
+
+```python
+company = spark.read.format("hudi").load(cfg["recommendation"]["company_sales_hudi"])
+compet  = spark.read.format("hudi").load(cfg["recommendation"]["competitor_sales_hudi"])
+catalog = spark.read.format("hudi").load(cfg["recommendation"]["seller_catalog_hudi"])
+
+from pyspark.sql import functions as F, Window as W
+# Top-10 company by units_sold (per category if available)
+top_company = (company.groupBy("item_id")
+               .agg(F.sum("units_sold").alias("total_units"),
+                    F.sum("revenue").alias("total_revenue"))
+               .withColumn("rank", F.dense_rank().over(W.orderBy(F.desc("total_units"), F.desc("total_revenue"))))
+               .filter("rank <= 10")
+               .drop("rank"))
+
+# Top-10 competitor (market)
+top_compet = (compet.groupBy("item_id")
+              .agg(F.sum("units_sold").alias("mkt_units"),
+                   F.max("marketplace_price").alias("market_price")))
+              # rank and keep top 10 similarly …
+
+top_items = top_company.select("item_id").union(top_compet.select("item_id")).distinct()
+
+# Missing per seller
+seller_items = catalog.select("seller_id", "item_id")
+missing = (seller_items.select("seller_id").distinct()
+           .crossJoin(top_items)
+           .join(seller_items, ["seller_id","item_id"], "left_anti"))
+
+# Metrics
+who_sells_it = catalog.groupBy("item_id").agg(F.countDistinct("seller_id").alias("seller_count"))
+units_for_item = company.groupBy("item_id").agg(F.sum("units_sold").alias("total_units"))
+price_lookup = (compet.groupBy("item_id").agg(F.max("marketplace_price").alias("market_price"))
+                .unionByName(catalog.groupBy("item_id").agg(F.max("marketplace_price").alias("market_price")), allowMissingColumns=True)
+                .groupBy("item_id").agg(F.max("market_price").alias("market_price")))
+
+rec = (missing
+  .join(catalog.select("item_id","item_name","category").dropDuplicates(["item_id"]), "item_id", "left")
+  .join(units_for_item, "item_id")
+  .join(who_sells_it, "item_id")
+  .join(price_lookup, "item_id")
+  .withColumn("expected_units_sold", (F.col("total_units")/F.col("seller_count")))
+  .withColumn("expected_revenue", F.col("expected_units_sold")*F.col("market_price"))
+  .select("seller_id","item_id","item_name","category","market_price","expected_units_sold","expected_revenue")
+)
+
+rec.coalesce(1).write.mode("overwrite").option("header", True).csv(cfg["recommendation"]["output_csv"])
+```
+
+(That implements the formula from the brief.) 
+
+# One-week execution plan
+
+**Day 1** – Set up repo structure; author `ecomm_prod.yml` for **local** paths first; create raw sample CSVs (you can start with 50–100 rows). 
+**Day 2** – Implement `etl_seller_catalog.py` (cleaning + DQ + quarantine + Hudi write). 
+**Day 3** – Implement `etl_company_sales.py` (date standardization, non-negative numeric, fill 0) + Hudi write. 
+**Day 4** – Implement `etl_competitor_sales.py` (types and DQ) + Hudi write; add unit tests/smoke checks. 
+**Day 5** – Implement `consumption_recommendation.py` (top-10 logic, gaps, metrics) + write CSV; validate with a few manual cases. 
+**Day 6** – Wire **shell scripts** for spark-submit (4 scripts as per structure). Create README with assumptions (ranking metric = units_sold; tie-break = revenue; category handling). 
+**Day 7** – Final cleanup: re-run pipelines, verify quarantine contents, check CSV schema, zip the folder.
+
+# Reusing parts of your previous project
+
+* You already have a **Spark bootstrap + YAML + S3A plumbing** (and you debugged jars/driver classpath). Reuse that scaffolding unchanged.
+* **Swap Delta → Hudi**: the assignment explicitly wants **Hudi** for the ETL outputs and the final state should be **3 Hudi tables**; your earlier Delta writes were failing on `io/delta/storage/LogStore`, and in any case Delta isn’t asked for here. Replace `.format("delta")` with `.format("hudi")` and set the appropriate Hudi options (record keys, precombine, upsert). 
+* Keep your **quarantine writer** and **DQ utilities**—just align the rules with the table-specific checks from the PDF. 
+* Keep your **medallion directory layout** and logging; only the sink format and keys change.
+
+# Config example (local paths, easy to test)
+
+The PDF shows a sample `ecomm_prod.yml`; mirror that with local folders while developing, then flip to S3 later. 
+
+```yaml
+seller_catalog:
+  input_path: "/data/raw/seller_catalog/*.csv"
+  hudi_output_path: "/data/processed/seller_catalog_hudi/"
+
+company_sales:
+  input_path: "/data/raw/company_sales/*.csv"
+  hudi_output_path: "/data/processed/company_sales_hudi/"
+
+competitor_sales:
+  input_path: "/data/raw/competitor_sales/*.csv"
+  hudi_output_path: "/data/processed/competitor_sales_hudi/"
+
+recommendation:
+  seller_catalog_hudi: "/data/processed/seller_catalog_hudi/"
+  company_sales_hudi:  "/data/processed/company_sales_hudi/"
+  competitor_sales_hudi:"/data/processed/competitor_sales_hudi/"
+  output_csv: "/data/processed/recommendations_csv/"
+```
+
+# What to submit
+
+A **.zip** of the folder structure above, with all 4 scripts, 4 Spark jobs, YAML, and (optionally) a README. The grader expects exactly this layout. 
+
+---
+
+Excellent — let’s break that down clearly.
+The **Seller**, **Company Sales**, and **Competitor Sales** datasets are *three perspectives on the same marketplace*, each describing the sales of products — but from different roles and sources of data.
+
+Let’s unpack them one by one, then connect how they interact conceptually and technically 👇
+
+---
+
+## 🧩 1️⃣ Seller — “The Marketplace Participant”
+
+### 💡 Who is the *Seller*?
+
+* A **Seller** is any individual or business listing products on your **e-commerce platform** (the “Company” platform).
+* Think of Amazon’s 3rd-party vendors, or Flipkart sellers — these are people who sell through your company’s site, not your company itself.
+
+### 📦 What data does the **Seller Catalog** contain?
+
+Each seller’s **catalog** lists what items they currently sell, their prices, and stock levels.
+
+| seller_id | item_id | item_name    | category    | marketplace_price | stock_qty |
+| --------- | ------- | ------------ | ----------- | ----------------- | --------- |
+| S1        | I100    | iPhone 14    | Electronics | 699.0             | 12        |
+| S1        | I200    | Earbuds X    | Electronics | 29.0              | 50        |
+| S2        | I200    | Earbuds X    | Electronics | 27.5              | 35        |
+| S3        | I300    | Gaming Mouse | Electronics | 39.9              | 20        |
+
+### 🧠 What it represents
+
+* Each seller has **their own subset of items** from the full marketplace catalog.
+* This dataset defines *who is selling what* at *what price*.
+
+---
+
+## 🧩 2️⃣ Company Sales — “Your Platform’s Sales Record”
+
+### 💡 Who is the *Company*?
+
+* This is **you**, the e-commerce company running the platform.
+* You track the **overall sales** of products sold *through your platform*, regardless of which seller sold them.
+
+### 💰 What data does the **Company Sales** table contain?
+
+It’s typically an **aggregated** view — sales metrics per item.
+
+| item_id | units_sold | revenue   | sale_date  |
+| ------- | ---------- | --------- | ---------- |
+| I100    | 5000       | 3,495,000 | 2025-10-15 |
+| I200    | 12000      | 348,000   | 2025-10-16 |
+| I300    | 9200       | 367,000   | 2025-10-16 |
+
+### 🧠 What it represents
+
+* This shows **which products are selling best** on *your platform overall*, not per seller.
+* It reflects **demand** and **popularity** — the “top selling” view you’ll use for recommendations.
+
+---
+
+## 🧩 3️⃣ Competitor Sales — “External Market Data”
+
+### 💡 Who is the *Competitor*?
+
+* Competitors are **other e-commerce sites** (e.g., Amazon if you are Flipkart, or vice versa).
+* This dataset tells you what items and sellers are performing well in the **external market**.
+
+### 🛒 What data does the **Competitor Sales** table contain?
+
+It’s similar to company sales but comes from another platform — possibly through market research or scraping.
+
+| seller_id | item_id | units_sold | revenue   | marketplace_price | sale_date  |
+| --------- | ------- | ---------- | --------- | ----------------- | ---------- |
+| C9        | I400    | 15000      | 450,000   | 30.0              | 2025-10-16 |
+| C7        | I500    | 8500       | 5,100,000 | 599.0             | 2025-10-16 |
+
+### 🧠 What it represents
+
+* You see **what’s trending outside your own company**, giving you **market intelligence**.
+* For instance, if a competitor’s platform is selling “I400” in high volume but none of your sellers have it, it’s an opportunity.
+
+---
+
+## 🔗 How They’re Related
+
+| Relationship                          | Meaning                                                                                                                                  |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Seller Catalog ↔ Company Sales**    | Your sellers are selling items that contribute to your company’s total sales. Company Sales aggregates all sellers’ data.                |
+| **Company Sales ↔ Competitor Sales**  | Both describe sales of similar products, but on *different platforms*. Comparing helps find trending products missing in your ecosystem. |
+| **Seller Catalog ↔ Competitor Sales** | Shows which items competitors’ sellers offer that your sellers do not — potential recommendations for expansion.                         |
+
+---
+
+## 🧠 Conceptual Analogy
+
+Imagine you own an e-commerce platform called **ShopCube**.
+
+| Perspective               | Description                                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 🧍‍♂️ **Seller**          | John’s Gadgets, Priya Electronics, or Rahul Traders — they upload their catalogs to ShopCube.            |
+| 🏢 **Company (ShopCube)** | You manage the platform and record how many iPhones, TVs, and Laptops were sold overall.                 |
+| 🏬 **Competitors**        | Amazon or Flipkart — they also sell similar items; you have partial visibility of what sells well there. |
+
+Now, your *goal* as the platform owner is to **help your sellers improve sales** by recommending **top-selling products** that they don’t currently sell.
+
+---
+
+## 💡 The Relationship Flow
+
+```text
+Competitor Sales  → show what's hot in the overall market
+       ↓
+Company Sales     → show what's selling well on your own platform
+       ↓
+Seller Catalog    → show what each seller is offering
+       ↓
+Recommendation    → find what the seller is missing from the top-selling list
+```
+
+**Goal:**
+For each seller → identify “Top 10 selling products” (from Company + Competitor data)
+→ find which of those they *don’t* sell
+→ recommend those products with price, expected units_sold, and expected revenue.
+
+---
+
+## 🔍 Example: Simple End-to-End Scenario
+
+Let’s take one seller (S1) and 3 datasets:
+
+### Seller Catalog
+
+| seller_id | item_id | item_name |
+| --------- | ------- | --------- |
+| S1        | I100    | iPhone 14 |
+| S1        | I200    | Earbuds X |
+
+### Company Sales (Top Products)
+
+| item_id | units_sold |
+| ------- | ---------- |
+| I100    | 5000       |
+| I200    | 12000      |
+| I300    | 9200       |
+| I400    | 8900       |
+| I500    | 8700       |
+
+### Competitor Sales
+
+| item_id | units_sold |
+| ------- | ---------- |
+| I400    | 15000      |
+| I500    | 8500       |
+
+### Derived Recommendation
+
+| seller_id | missing_item_id | market_price | expected_units_sold | expected_revenue |
+| --------- | --------------- | ------------ | ------------------- | ---------------- |
+| S1        | I300            | 39.9         | 9200 / 4 = 2300     | 91,770           |
+| S1        | I400            | 30.0         | 15000 / 3 = 5000    | 150,000          |
+| S1        | I500            | 599.0        | 8500 / 2 = 4250     | 2,545,750        |
+
+So, S1 currently sells I100 and I200 but *not* I300, I400, I500 →
+We recommend those missing top products.
+
+---
+
+## 🧩 Technical Relationship (Join Keys)
+
+| Dataset          | Primary Key         | Join Key | Purpose                                 |
+| ---------------- | ------------------- | -------- | --------------------------------------- |
+| Seller Catalog   | seller_id + item_id | item_id  | Identify which items each seller offers |
+| Company Sales    | item_id             | item_id  | Identify top selling items overall      |
+| Competitor Sales | seller_id + item_id | item_id  | Identify market trends                  |
+
+Joins:
+
+* For recommendations, use **left anti-join** between Seller Catalog and Top Items list.
+* Use **item_id** as the linking key between datasets.
+
+---
+
+## 🚀 Summary of Relationship
+
+| Entity           | Description                                   | Relation                                   |
+| ---------------- | --------------------------------------------- | ------------------------------------------ |
+| Seller           | Who lists and sells products                  | Belongs to company marketplace             |
+| Company Sales    | Aggregated platform sales                     | Derived from all sellers on the platform   |
+| Competitor Sales | External market sales                         | Used to identify trending products outside |
+| Combined Goal    | Recommend missing top products to each seller | Derived by joining all 3 datasets          |
+
+---
+
+Perfect — this is *exactly* the right question to ask, because it shows you’re thinking not just about *what to compute*, but *why* it’s being computed that way.
+
+Let’s decode this step by step 👇
+
+---
+
+# 🎯 Objective Recap
+
+We’re recommending **top-selling products** that a given seller currently *does not sell*.
+
+For each missing product, we need to estimate:
+
+| Metric                  | Meaning                                                                                       |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| **market_price**        | The likely price point at which the product is being sold in the market                       |
+| **expected_units_sold** | The approximate quantity this seller *can expect to sell* if they start offering that product |
+| **expected_revenue**    | The potential revenue for that seller (units × price)                                         |
+
+These three values are *derived using data* from **Company Sales** and **Competitor Sales**, as described in your assignment PDF.
+
+---
+
+# ⚙️ 1️⃣ Market Price
+
+### 💡 Concept:
+
+Market price represents the **going rate** for that product in the overall marketplace.
+
+### 📊 Data Source:
+
+From **Competitor Sales** and/or **Company Sales**.
+
+### 🧮 Formula Logic:
+
+* If available in **Competitor Sales**, take the **average or max marketplace_price** (because competitor data often has current retail pricing).
+* If not available, fallback to **Company Sales average price** (revenue ÷ units_sold).
+* If neither is available, take the **median** of similar category items.
+
+### 🧠 Interpretation:
+
+> “If similar sellers or competitors are selling the same item for ₹30, then our seller should expect to list it around ₹30 as well.”
+
+---
+
+# ⚙️ 2️⃣ Expected Units Sold
+
+### 💡 Concept:
+
+Expected units sold estimates how much quantity a *new seller* could sell for that product, based on **historical demand** and **competition**.
+
+### 📊 Data Source:
+
+**Company Sales** (or Competitor Sales) aggregated per item.
+
+### 🧮 Formula Used in the Example:
+
+[
+\text{Expected Units Sold} = \frac{\text{Total Units Sold for the Item}}{\text{Number of Sellers Currently Selling That Item}}
+]
+
+So if:
+
+* 9,200 units of *I300* were sold overall,
+* and 4 sellers are already selling that item,
+  then:
+  [
+  9,200 / 4 = 2,300
+  ]
+
+That’s an **approximation** of how many units each seller sells on average for that item.
+
+### 🧠 Interpretation:
+
+> “If every existing seller sells roughly 2,300 units of that item, our new seller can also expect to sell around 2,300.”
+
+---
+
+# ⚙️ 3️⃣ Expected Revenue
+
+### 💡 Concept:
+
+Expected revenue tells how much money the seller might make by selling that product.
+
+### 🧮 Formula:
+
+[
+\text{Expected Revenue} = \text{Expected Units Sold} \times \text{Market Price}
+]
+
+So:
+
+| missing_item_id | market_price | expected_units_sold | expected_revenue           |
+| --------------- | ------------ | ------------------- | -------------------------- |
+| I300            | 39.9         | 2300                | 39.9 × 2300 = **91,770**   |
+| I400            | 30.0         | 5000                | 30 × 5000 = **150,000**    |
+| I500            | 599.0        | 4250                | 599 × 4250 = **2,545,750** |
+
+---
+
+# 🧩 Bringing it Together
+
+| seller_id | missing_item_id | total_units_sold (from Company/Competitor) | sellers_selling (from catalog) | market_price | expected_units_sold | expected_revenue        |
+| --------- | --------------- | ------------------------------------------ | ------------------------------ | ------------ | ------------------- | ----------------------- |
+| S1        | I300            | 9,200                                      | 4                              | 39.9         | 9,200 / 4 = 2,300   | 39.9 × 2,300 = 91,770   |
+| S1        | I400            | 15,000                                     | 3                              | 30.0         | 15,000 / 3 = 5,000  | 30.0 × 5,000 = 150,000  |
+| S1        | I500            | 8,500                                      | 2                              | 599.0        | 8,500 / 2 = 4,250   | 599 × 4,250 = 2,545,750 |
+
+---
+
+# 🧮 Where Each Number Comes From
+
+| Column                | Derived From                                    | Explanation                                          |
+| --------------------- | ----------------------------------------------- | ---------------------------------------------------- |
+| `total_units_sold`    | Company/Competitor Sales                        | Historical sales volume of that product              |
+| `sellers_selling`     | Seller Catalog                                  | Count of unique sellers who currently sell that item |
+| `market_price`        | Competitor (preferred) → Company → Category avg | Benchmark selling price in the market                |
+| `expected_units_sold` | total_units_sold ÷ sellers_selling              | Average potential sales for a new seller             |
+| `expected_revenue`    | market_price × expected_units_sold              | Estimated earning if they list the product           |
+
+---
+
+# 🧠 Why This Works
+
+This method balances **demand** (from Company/Competitor Sales) with **competition** (from current sellers):
+
+* If **demand is high** but **few sellers exist**, `expected_units_sold` will be large — a *strong recommendation*.
+* If **many sellers exist**, the expected share per seller drops — *lower priority* recommendation.
+* The **market price** ensures the recommendation is realistic in the context of competitive pricing.
+
+---
+
+# 🔍 Example Insight from the Numbers
+
+| Item | Demand (units_sold) | Sellers | Market Price | Insights                                          |
+| ---- | ------------------- | ------- | ------------ | ------------------------------------------------- |
+| I300 | 9,200               | 4       | 39.9         | Good demand, moderate competition, steady margins |
+| I400 | 15,000              | 3       | 30.0         | High demand, low competition — strong candidate!  |
+| I500 | 8,500               | 2       | 599.0        | Lower volume but very high revenue potential      |
+
+So if you were Seller S1, you’d **prioritize I400 and I500** as potential new listings.
+
+---
+
+# 🚀 In Short
+
+| Metric                  | Formula                            | Based On                | Interpretation                    |
+| ----------------------- | ---------------------------------- | ----------------------- | --------------------------------- |
+| **market_price**        | from competitor/company            | Realistic selling price | “At what rate do others sell it?” |
+| **expected_units_sold** | total_units_sold ÷ active_sellers  | Demand ÷ Competition    | “How many can I expect to sell?”  |
+| **expected_revenue**    | expected_units_sold × market_price | Earnings potential      | “How much money can I make?”      |
+
+---

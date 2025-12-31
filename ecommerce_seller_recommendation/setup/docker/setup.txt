@@ -1,0 +1,5 @@
+1. Dockerfile
+2. docker-compose.yml
+3. hudi-test.py
+4. spark-defaults.conf
+5. SPARK_README - which has all the instructions on how to use it

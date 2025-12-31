@@ -1,0 +1,186 @@
+1. **Hudi + Spark ETL (upserts, medallion-ready)**
+   * Quick-Start Guide: [Apache Hudi Quick-Start](https://hudi.apache.org/docs/quick-start-guide/) 
+   * Overview: [Apache Hudi Overview](https://hudi.apache.org/docs/overview/) 
+   * Blog on incremental processing: [Incrementally process data with Apache Hudi](https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi) 
+
+2. **Config/YAML-driven pipelines + medallion structure**
+   * Example config-driven pipeline: [Azure config-driven data pipeline](https://github.com/Azure/config-driven-data-pipeline) 
+
+3. **Data Quality + Quarantine Zone (rule failures with reasons)**
+   * Spark-Expectations library: [Nike-Inc/Spark-Expectations GitHub](https://github.com/Nike-Inc/spark-expectations) 
+   * Setup doc: [Spark-Expectations Getting Started](https://engineering.nike.com/spark-expectations/v2.5.0/getting-started/setup/) 
+   * Great Expectations + Spark: [Hands-on GE with Spark GitHub](https://github.com/MDS-BD/hands-on-great-expectations-with-spark) 
+
+4. **(Optional) CDC → Hudi incremental upserts**
+   * Blog covering Hudi incremental/CDC processing: [Incremental & CDC with Apache Hudi](https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi) 
+
+5. **Consumption layer — Top-sellers & “missing-from-catalog” recommendations**
+   * Example popularity-based recommender (Python e-commerce): Search “Python Ecommerce recommendation system popularity” on GitHub for group-by/top-N patterns.
+   * Example repo for CF/popularity: [Recommendation-system Pyspark GitHub](https://github.com/bhparijat/Recommendation-system-Pyspark)
+
+6. **Put it together (suggested plan of reuse)**
+   * Project skeleton template: [Databricks-Template GitHub](https://github.com/andre-salvati/databricks-template) – you can adapt for your structure.
+   * README + docs style: Use patterns above in your documentation folder.
+
+**Quick links (by requirement)**
+   * Apache Hudi Quick-Start: [https://hudi.apache.org/docs/quick-start-guide/](https://hudi.apache.org/docs/quick-start-guide/)
+   * Spark-Expectations GitHub: [https://github.com/Nike-Inc/spark-expectations](https://github.com/Nike-Inc/spark-expectations)
+   * Hands-on GE with Spark: [https://github.com/MDS-BD/hands-on-great-expectations-with-spark](https://github.com/MDS-BD/hands-on-great-expectations-with-spark)
+   * Config-driven pipeline skeleton: [https://github.com/Azure/config-driven-data-pipeline](https://github.com/Azure/config-driven-data-pipeline)
+   * Incremental & CDC blog: [https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi](https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi)
+   * Recommender system example (PySpark): [https://github.com/bhparijat/Recommendation-system-Pyspark](https://github.com/bhparijat/Recommendation-system-Pyspark)
+   * Project skeleton: [https://github.com/andre-salvati/databricks-template](https://github.com/andre-salvati/databricks-template)
+
+If you like, I can **compile these into a single markdown file** with clickable links + section headings ready for your repo README.
+
+[1]: https://hudi.apache.org/docs/quick-start-guide/?utm_source=chatgpt.com "Spark Quick Start - Apache Hudi"
+[2]: https://hudi.apache.org/docs/overview/?utm_source=chatgpt.com "Overview | Apache Hudi"
+[3]: https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi?utm_source=chatgpt.com "Getting Started: Incrementally process data with Apache Hudi™"
+[4]: https://github.com/Nike-Inc/spark-expectations?utm_source=chatgpt.com "Nike-Inc/spark-expectations: A Python Library to support ... - GitHub"
+[5]: https://engineering.nike.com/spark-expectations/v2.5.0/getting-started/setup/?utm_source=chatgpt.com "Setup - Spark-Expectations - Nike Engineering"
+[6]: https://github.com/MDS-BD/hands-on-great-expectations-with-spark?utm_source=chatgpt.com "MDS-BD/hands-on-great-expectations-with-spark - GitHub"
+
+                                                                     --------------------------------------------------
+
+# 📘 Reference Guide – Repositories and Resources for Assignment Implementation
+
+This document lists **trusted repositories, articles, and guides** aligned with your assignment:
+*“E-commerce Top Seller Items Recommendation using Apache Hudi, Spark ETL, DQ with quarantine, and a consumption job.”*
+
+All resources below are linked inline for direct access and are grouped by implementation stage.
+
+---
+
+## 🔹 1. Hudi + Spark ETL (Upserts, Medallion-Ready)
+
+Use these for building your three ETL pipelines (Seller Catalog, Company Sales, Competitor Sales).
+
+* **Apache Hudi Quick-Start Guide:**
+  👉 [https://hudi.apache.org/docs/quick-start-guide/](https://hudi.apache.org/docs/quick-start-guide/)
+  Step-by-step Spark DataFrameWriter API examples for upsert/insert/delete operations.
+
+* **Hudi Overview:**
+  👉 [https://hudi.apache.org/docs/overview/](https://hudi.apache.org/docs/overview/)
+  Explains Hudi table types (Copy-on-Write vs Merge-on-Read), indexing, and metadata management.
+
+* **Incremental & CDC Processing Blog:**
+  👉 [https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi](https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi)
+  Shows incremental ingestion, CDC, and how to configure Hudi for near-real-time updates.
+
+**💡 Recommendation:**
+Base your ETL scripts on Hudi’s `DataFrameWriter` syntax.
+Example:
+
+```python
+df.write.format("hudi").options(**hudi_opts).mode("append").save(target_path)
+```
+
+---
+
+## 🔹 2. Config / YAML-Driven Pipelines + Medallion Architecture
+
+Adopt YAML-based orchestration for Bronze → Silver → Gold pipeline configuration.
+
+* **Azure Config-Driven Data Pipeline (YAML-based ETL Example):**
+  👉 [https://github.com/Azure/config-driven-data-pipeline](https://github.com/Azure/config-driven-data-pipeline)
+  Template demonstrating YAML-driven ETL configurations for medallion-style workflows.
+
+* **Metorikku (Config-Driven Spark ETL Framework):**
+  👉 [https://github.com/YotpoLtd/metorikku](https://github.com/YotpoLtd/metorikku)
+  YAML schema definition pattern for defining transformations, joins, and sinks.
+
+**💡 Recommendation:**
+Adopt this style to store your paths, table names, and partitions in `ecomm_prod.yml`, removing hard-coded paths from scripts.
+
+---
+
+## 🔹 3. Data Quality + Quarantine Zone (Rule Failures with Reasons)
+
+Implement automated DQ validation and quarantine handling for failed records.
+
+* **Nike Spark-Expectations (DQ + Quarantine):**
+  👉 [https://github.com/Nike-Inc/spark-expectations](https://github.com/Nike-Inc/spark-expectations)
+  👉 Setup Doc: [https://engineering.nike.com/spark-expectations/v2.5.0/getting-started/setup/](https://engineering.nike.com/spark-expectations/v2.5.0/getting-started/setup/)
+  Built-in “error table” pattern for capturing failed records and failure reasons.
+
+* **Great Expectations with Spark Integration:**
+  👉 [https://github.com/MDS-BD/hands-on-great-expectations-with-spark](https://github.com/MDS-BD/hands-on-great-expectations-with-spark)
+  👉 Docs: [https://docs.greatexpectations.io/docs/0.18/oss/guides/expectations/features_custom_expectations/how_to_add_spark_support_for_an_expectation/](https://docs.greatexpectations.io/docs/0.18/oss/guides/expectations/features_custom_expectations/how_to_add_spark_support_for_an_expectation/)
+
+**💡 Recommendation:**
+
+* Use Spark-Expectations for automatic quarantine creation with `dq_failure_reason`.
+* Define validation rules such as:
+
+  ```python
+  expect_not_null("seller_id")
+  expect_column_values_to_be_between("marketplace_price", 0, None)
+  expect_date_not_in_future("sale_date")
+  ```
+
+---
+
+## 🔹 4. (Optional) CDC → Hudi Incremental Upserts
+
+* **CDC & Incremental Ingestion Blog:**
+  👉 [https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi](https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi)
+  Demonstrates change-data-capture and Hudi’s incremental query capabilities.
+
+**💡 Recommendation:**
+If your data source supports CDC (Debezium, Kafka), integrate it to demonstrate Hudi incremental ingestion and updates.
+
+---
+
+## 🔹 5. Consumption Layer — Top Sellers & “Missing-from-Catalog” Recommendations
+
+* **PySpark Recommendation System (Top-N / Popularity Example):**
+  👉 [https://github.com/bhparijat/Recommendation-system-Pyspark](https://github.com/bhparijat/Recommendation-system-Pyspark)
+
+* **Collaborative + Popularity Hybrid (Optional):**
+  👉 [https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/Recommender%20Systems](https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/Recommender%20Systems)
+
+**💡 Recommendation:**
+Use the popularity-based approach:
+
+1. Aggregate top sellers by revenue and units sold.
+2. Anti-join with catalog to find missing items.
+3. Compute:
+
+   ```
+   expected_units_sold = total_units / count_distinct(sellers_selling)
+   expected_revenue = expected_units_sold * market_price
+   ```
+4. Export final results as CSV with columns:
+   `seller_id, marketplace_price, units_sold, expected_revenue`
+
+---
+
+## 🔹 6. Put It Together (Suggested Plan of Reuse)
+
+* **Project Skeleton Template:**
+  👉 [https://github.com/andre-salvati/databricks-template](https://github.com/andre-salvati/databricks-template)
+  Use this structure for foldering (`configs/`, `src/etl/`, `src/dq/`, `src/consumption/`, `tests/`).
+
+**💡 Integration Plan:**
+
+1. Clone `databricks-template` for your base repo layout.
+2. Copy Hudi ETL patterns from Quick-Start ([Hudi guide](https://hudi.apache.org/docs/quick-start-guide/)).
+3. Add DQ with [Spark-Expectations](https://github.com/Nike-Inc/spark-expectations).
+4. Adopt [Azure Config-Driven Pipeline](https://github.com/Azure/config-driven-data-pipeline) structure for YAML orchestration.
+5. Plug in recommendation logic from [PySpark Recommendation Repo](https://github.com/bhparijat/Recommendation-system-Pyspark).
+6. Document everything in `README.md` with usage instructions and references.
+
+---
+
+## 🔹 Quick Links (By Requirement)
+
+| Requirement                          | Reference / Repository                                                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Hudi ETL**                         | [Apache Hudi Quick-Start](https://hudi.apache.org/docs/quick-start-guide/)                                                                        |
+| **Hudi Overview**                    | [Apache Hudi Overview](https://hudi.apache.org/docs/overview/)                                                                                    |
+| **Config-Driven Pipeline**           | [Azure Config-Driven Data Pipeline](https://github.com/Azure/config-driven-data-pipeline)                                                         |
+| **Spark-Expectations (DQ)**          | [Nike-Inc/Spark-Expectations](https://github.com/Nike-Inc/spark-expectations)                                                                     |
+| **Great Expectations (GE)**          | [Hands-on GE with Spark](https://github.com/MDS-BD/hands-on-great-expectations-with-spark)                                                        |
+| **CDC Blog**                         | [Onehouse: Incrementally Process Data with Apache Hudi](https://www.onehouse.ai/blog/getting-started-incrementally-process-data-with-apache-hudi) |
+| **Top-Seller Recommender (PySpark)** | [PySpark Recommendation System Repo](https://github.com/bhparijat/Recommendation-system-Pyspark)                                                  |
+| **Project Skeleton Template**        | [Databricks Template](https://github.com/andre-salvati/databricks-template)                                                                       |

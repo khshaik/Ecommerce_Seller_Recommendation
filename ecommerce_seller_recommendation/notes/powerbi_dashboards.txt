@@ -1,0 +1,426 @@
+⭐ STEP 1 — Install Power BI (on Mac)
+
+Because Power BI Desktop is Windows-only, do ONE of the following:
+
+OPTION A (Recommended) — Use Power BI Service (online version)
+
+No installation needed:
+👉 https://app.powerbi.com/
+
+OPTION B — Use Windows VM
+
+Install Power BI Desktop via:
+Parallels Desktop or VirtualBox + Windows ISO
+
+The assignment acceptance normally allows Power BI Service, so use that.
+
+⭐ STEP 2 — Prepare your dataset
+
+From your Jupyter notebooks:
+
+Open HP_Preprocessing.ipynb
+
+Locate the final cleaned dataframe (before splitting)
+
+Export to CSV:
+
+df.to_csv("clean_data.csv", index=False)
+
+
+Upload clean_data.csv to Power BI
+
+⭐ STEP 3 — Load data into Power BI
+In Power BI Service:
+
+Click Create → Upload a file → CSV
+
+Load the clean_data.csv
+
+⭐ STEP 4 — Create slicers (interactive dropdowns)
+
+Add the following slicers:
+
+✔ City (multi-select)
+✔ Bedrooms (BHK)
+✔ Property Type
+✔ Availability
+
+These will make your dashboard interactive.
+
+⭐ STEP 5 — Create visuals (one by one)
+📊 Visual 1: Avg Price by City
+
+Insert → Bar Chart
+
+Assign fields:
+
+X-axis → City
+
+Y-axis → Average of Price
+
+📊 Visual 2: Bedroom Count per City
+
+Insert → Clustered Column Chart
+
+Fields:
+
+Axis → City
+
+Legend → BHK
+
+Values → Count of rows
+
+📊 Visual 3: Price vs Area Scatter Plot
+
+Insert → Scatter Chart
+
+Fields:
+
+X → Area
+
+Y → Price
+
+Details → City
+
+Add slicers to filter by BHK.
+
+📊 Visual 4: Property Type Distribution
+
+Insert → Donut Chart
+
+Fields:
+
+Legend → Property Type
+
+Values → Count of rows
+
+📊 Visual 5: Drill-down button
+
+Insert → Buttons → Navigator → Page Navigator
+Make Page 2 your “City drill-down”.
+
+On Page 2:
+
+Add visual: Avg Price by BHK
+
+Add visual: Avg Price by Property Type
+
+Add visual: Availability Pie Chart
+
+⭐ STEP 6 — Format the dashboard (professional theme)
+
+Apply Power BI theme: “Professional” or “Blue Dust”
+
+Align visuals using Format → Align
+
+Add Titles (e.g., “City-Level Housing Insights”)
+
+⭐ STEP 7 — Publish / Export
+
+Your final submission can include:
+
+✔ PBIX or PowerBI Service .pdf export
+✔ Screenshots (3–5 key plots)
+✔ Notebook output visuals (matplotlib/seaborn)
+
+--------------------
+⭐ 1. City-Level Housing Market Overview Dashboard
+Purpose: Market health snapshot for decision-makers
+Recommended visuals:
+
+✔ Avg Price by City (Map Visual)
+✔ Median Price by City (Bar Chart)
+✔ Average Property Size by City
+✔ City-Level Supply Volume (Count of listings)
+✔ Top 10 Expensive Cities (Column Chart)
+✔ Interactive slicers
+
+BHK
+	Property Type
+	Furnished Status
+	Availability
+
+Why it’s valuable:
+	Shows where prices are high, supply is dense, and properties are large or small.
+
+⭐ 2. Locality Hotspot & Affordability Dashboard
+Purpose: Micro-market decisions (developers, buyers)
+Visual Ideas:
+
+✔ Locality vs Average Price (Treemap or Heatmap)
+✔ Locality vs Avg Price per SqFt (Clustered Column)
+✔ Top 20 Localities with Best Price-to-Size Ratio (Bar Chart)
+✔ Locality Demand Score (Count of properties)
+✔ Map visual – Locality cluster overlay
+
+High-value KPI:
+
+“Price Per SqFt Gradient Map”
+→ Quickly identifies premium vs mid-market vs affordable pockets.
+
+⭐ 3. Property Configuration Insights (BHK & Size)
+Purpose: Understand demand distribution
+Visuals:
+
+✔ BHK Distribution (Stacked Column Chart)
+✔ BHK vs Avg Price (Line + Clustered Column)
+✔ BHK vs Avg Size_in_SqFt (Bar Chart)
+✔ BHK vs Price Per SqFt (Scatter)
+
+Slicers:
+
+City
+
+Property Type
+
+Why important:
+
+Developers want to see which configurations dominate and which cities demand higher BHKs.
+
+⭐ 4. Amenities Impact Dashboard (Amenity Scorecard)
+
+Your dataset includes:
+
+Has_Pool
+
+Has_Gym
+
+Has_Garden
+
+Has_Clubhouse
+
+Has_Playground
+
+Total_Nearby_Facilities
+
+Nearby_Schools
+
+Nearby_Hospitals
+
+Public Transport Accessibility
+
+Visuals:
+
+✔ Amenities vs Avg Price (Column chart)
+✔ Amenity Count vs Price (Scatter)
+✔ Amenities Availability % (Donut Chart)
+✔ Heatmap: City vs Amenity presence
+
+Advanced Visual:
+
+“Amenity Premium Score”:
+Price difference between properties with and without amenities.
+
+Huge scoring area — rarely done by students.
+
+⭐ 5. Affordability & ROI Dashboard
+Visuals:
+
+✔ Price per SqFt distribution (Histogram)
+✔ Price vs Size Bubble Chart
+✔ Affordability segment (Low, Mid, Premium)
+✔ Price Segmentation Funnel
+✔ Price Bands by City:
+
+< 50 Lakhs
+
+50–1 Cr
+
+1–2 Cr
+
+2–3 Cr
+
+3+ Cr
+
+Insight Examples:
+
+“Hyderabad and Pune have highest affordable segment concentration”
+
+“Bangalore shows higher premium properties per SqFt”
+
+⭐ 6. Age of Property Dashboard
+
+Columns: Age_of_Property, Availability_Binary, Total_Floors, Floor_No
+
+Visuals:
+
+✔ Age vs Avg Price (Line Chart)
+✔ Age Brackets (Donut Chart)
+
+0–5 yrs
+
+5–10 yrs
+
+10–20 yrs
+
+20+ yrs
+
+✔ Floor_No vs Price (Scatter)
+✔ Total_Floors vs Price (Bubble Chart)
+
+Great for renovation projects, resale market analysis.
+
+⭐ 7. Supply & Demand Distribution Dashboard
+Visuals:
+
+✔ Number of Listings by City (Bar)
+✔ Property Type Contribution (Donut)
+✔ Furnished Status Distribution (Pie)
+✔ BHK Count Distribution (Histogram)
+
+KPI Cards:
+
+Total Properties
+
+Avg Price
+
+Avg SqFt
+
+Price per SqFt
+
+⭐ 8. Public Transport & Connectivity Score Dashboard
+
+Uses features:
+
+Public_Transport_Accessibility
+
+Transport_High
+
+Locality_Frequency
+
+City_Frequency
+
+Visuals:
+
+✔ Transport Score vs Avg Price (Line Chart)
+✔ Connectivity Level by City (Map)
+✔ High Transport Areas Price Lift (Bar)
+
+Shows where transport boosts prices.
+
+⭐ 9. Furnishing & Availability Dashboard
+
+Fields:
+Furnished_Status, Availability_Binary
+
+Visuals:
+
+✔ Furnished vs Unfurnished Price Comparison (Bar)
+✔ Availability Pie Chart (Ready / Under Construction)
+✔ Furnishing Impact on Price per SqFt (Scatter)
+
+Fantastic for rental-oriented businesses.
+
+⭐ 10. Price Prediction Supporting Dashboard
+
+Use ML-related engineered fields:
+
+Property_Quality_Score
+
+Locality_Frequency
+
+City_Frequency
+
+Visuals:
+
+✔ Quality Score vs Price (Line Chart)
+✔ Frequency Score vs Supply Volume
+
+Shows hidden patterns in engineered features.
+
+⭐ 11. KPI Scorecards
+
+Add KPI cards at top:
+
+Avg Price
+
+Median Size in SqFt
+
+Avg Price per SqFt
+
+Total Properties Listed
+
+Avg Age of Property
+
+Helpful for executive summaries.
+
+⭐ 12. Advanced Drill-Through Dashboards
+
+Create drill-through pages:
+
+City Drill-through
+
+Locality Drill-through
+
+Property Type Drill-through
+
+BHK-wise Drill-through
+
+Right-click → Drillthrough → go to detailed stats.
+
+This will give you FULL MARKS — instructors love drill-through.
+
+⭐ 13. Tooltip Pages (Advanced Feature for High Score)
+
+Create a Tooltip page that shows:
+
+Avg Price
+
+Avg SqFt
+
+Price per SqFt
+
+Amenities Score
+
+And assign it to:
+
+Map
+
+Bar
+
+Scatter visuals
+
+This makes your charts interactive and professional.
+
+⭐ 14. Page Navigator-Based Multi-Page Report
+
+Your report should include:
+
+Home / Summary Page
+
+City Drilldown
+
+Locality Insights
+
+Amenities Insights
+
+BHK Analysis
+
+Affordability Analysis
+
+Furnishing and Availability
+
+Add:
+Insert → Buttons → Navigator → Page Navigator
+
+This shows tabs like:
+
+Home | Cities | Localities | BHK | Amenities | Affordability
+
+⭐ 15. Composite Visuals (for top scoring dashboards)
+
+Try:
+
+Decomposition Tree (Price drivers)
+
+Key Influencers Visual (Which factors influence price)
+
+Smart Narrative (Auto insights summary)
+
+Field Parameters → dynamic switching
+
+Users can toggle between
+Price, Price per SqFt, Size, Age
+in the same chart
+
+These features are extremely high-value.

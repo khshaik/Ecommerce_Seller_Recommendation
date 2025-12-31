@@ -1,0 +1,19 @@
+analyze competitor data
+analyze existing/non-existing products
+products sold by only one seller
+identify missing item in the catalogue and recommend to existing sellers
+
+write using pyspark
+batch ingestion
+week 8 lectures
+
+recommend only top 10 selling items to other sellers or lesser
+	in case other sellers don't at all have these times, recommend 10
+	in case they already have, recommend only which they don't have or remove common items
+
+----------------
+Week 5, lesson3- hudi, lesson-practical
+Week 7-lesson1-file based ingestion, use-case demonstration
+Week 8-etl	
+
+week 5 ,lesson 3 and lesson 5 video, week 7 (lesson 1 and lesson 5), week 8 full video

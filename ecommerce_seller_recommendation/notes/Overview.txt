@@ -1,0 +1,61 @@
+Instructions
+Assignment#1: Ecommerce Top-Seller items Recommendation System
+
+Use Case Overview
+
+You are tasked with building a recommendation system for sellers on an e-commerce platform.
+
+In an e-commerce marketplace:
+
+There are multiple sellers, each with their own catalog of items.
+The platform tracks sales data for all items across all sellers and competitors.
+Some items are top-selling but not available in all seller catalogs.
+Your job is to analyze internal sales and competitor data and recommend top-selling items that each seller currently does not have. This will help sellers increase revenue and profit by onboarding these items.
+
+This pipeline should ingest, clean, and validate data, handle schema evolution, and generate actionable recommendations.
+
+Below is the detailed document attached. Please follow the instructions form the document.
+
+Please submit in the project structure format as a .zip file.
+
+Assignment1_PDF
+, PDF
+Evaluation Criteria
+Out of: 20 points
+Submission Details
+Submission type
+File submission
+Files allowed per submission
+One file
+Allowed files
+Custom File Types (.zip)
+Number of submissions
+Only the most recent submission is kept
+
+------
+
+
+Hide Assignment Information
+Instructions
+Assignment#1: Ecommerce Top-Seller items Recommendation System
+
+Use Case Overview
+
+You are tasked with building a recommendation system for sellers on an e-commerce platform.
+
+In an e-commerce marketplace:
+
+There are multiple sellers, each with their own catalog of items.
+The platform tracks sales data for all items across all sellers and competitors.
+Some items are top-selling but not available in all seller catalogs.
+Your job is to analyze internal sales and competitor data and recommend top-selling items that each seller currently does not have. This will help sellers increase revenue and profit by onboarding these items.
+
+This pipeline should ingest, clean, and validate data, handle schema evolution, and generate actionable recommendations.
+
+Below is the detailed document attached. Please follow the instructions form the document.
+
+Please submit in the project structure format as a .zip file.
+
+Due on 20 November 2025 11:59 PM
+Available on 09 November 2025 12:01 AM. Access restricted before availability starts.
+Available until 20 November 2025 11:59 PM. Access restricted after availability ends.
