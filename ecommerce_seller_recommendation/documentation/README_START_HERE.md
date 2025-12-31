@@ -142,7 +142,7 @@ aws s3 ls                # Should list your buckets
 
 ### Step 2: Setup Environment
 ```bash
-cd DSP_GA_2025em1100102_20112025/
+cd ecommerce_seller_recommendation/
 
 # Create virtual environment
 python3 -m venv .venv
@@ -155,7 +155,7 @@ pip install pyspark==3.5.2 delta-spark==3.2.0 pyarrow pyyaml s3fs pandas
 ### Step 3: Configure Project
 ```bash
 # Edit configuration file
-nano 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml
+nano ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml
 
 # Update these values:
 # - S3 bucket name (if different)
@@ -165,25 +165,25 @@ nano 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml
 ### Step 4: Run ETL Pipeline
 ```bash
 # Run company sales ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_company_sales_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_company_sales_spark_submit.sh
 
 # Run competitor sales ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_competitor_sales_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_competitor_sales_spark_submit.sh
 
 # Run seller catalog ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_seller_catalog_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_seller_catalog_spark_submit.sh
 
 # Generate recommendations
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh
 ```
 
 ### Step 5: Check Results
 ```bash
 # List recommendations
-aws s3 ls s3://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/
+aws s3 ls s3://ecommerce_seller_recommendation/ecommerce_seller_recommendation/processed/recommendations/
 
 # Download a sample
-aws s3 cp s3://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/company/company_seller_recommendation.csv ./
+aws s3 cp s3://ecommerce_seller_recommendation/ecommerce_seller_recommendation/processed/recommendations/company/company_seller_recommendation.csv ./
 
 # View first few rows
 head -20 company_seller_recommendation.csv
@@ -251,22 +251,22 @@ competitor_seller_recommendation.csv
 ### Run Tests
 ```bash
 # Test recommendation logic
-python 2025em1100102/ecommerce_seller_recommendation/s3/tests/test_consumption_recommendations.py
+python ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/tests/test_consumption_recommendations.py
 
 # Validate business logic
-python 2025em1100102/ecommerce_seller_recommendation/s3/tests/validate_logic.py
+python ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/tests/validate_logic.py
 
 # Check expected units calculation
-python 2025em1100102/ecommerce_seller_recommendation/s3/tests/validate_expected_units.py
+python ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/tests/validate_expected_units.py
 ```
 
 ### Check Logs
 ```bash
 # View ETL logs
-cat 2025em1100102/ecommerce_seller_recommendation/helper/logs/clean/etl/logs.txt
+cat ecommerce_seller_recommendation/ecommerce_seller_recommendation/helper/logs/clean/etl/logs.txt
 
 # View recommendation logs
-cat 2025em1100102/ecommerce_seller_recommendation/helper/logs/clean/recommendations/logs.txt
+cat ecommerce_seller_recommendation/ecommerce_seller_recommendation/helper/logs/clean/recommendations/logs.txt
 ```
 
 ### Inspect Quarantine Files
@@ -309,7 +309,7 @@ aws configure
 ### Issue: "Hudi table not found"
 **Solution:** Verify S3 paths in config match actual structure:
 ```bash
-aws s3 ls s3://2025em1100102/dsp_ga_2025em1100102_20112025/
+aws s3 ls s3://ecommerce_seller_recommendation/ecommerce_seller_recommendation/
 ```
 
 ---

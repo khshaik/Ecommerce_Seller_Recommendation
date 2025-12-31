@@ -12,7 +12,7 @@ aws s3 ls                  # AWS credentials configured
 
 ### Setup
 ```bash
-cd DSP_GA_2025em1100102_20112025/
+cd ecommerce_seller_recommendation/
 python3 -m venv .venv
 source .venv/bin/activate
 pip install pyspark==3.5.2 delta-spark==3.2.0 pyarrow pyyaml s3fs pandas
@@ -21,21 +21,21 @@ pip install pyspark==3.5.2 delta-spark==3.2.0 pyarrow pyyaml s3fs pandas
 ### Run Pipeline
 ```bash
 # Company Sales ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_company_sales_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_company_sales_spark_submit.sh
 
 # Competitor Sales ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_competitor_sales_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_competitor_sales_spark_submit.sh
 
 # Seller Catalog ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_seller_catalog_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_seller_catalog_spark_submit.sh
 
 # Generate Recommendations
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh
 ```
 
 ### Verify Output
 ```bash
-aws s3 ls s3://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/
+aws s3 ls s3://ecommerce_seller_recommendation/ecommerce_seller_recommendation/processed/recommendations/
 ```
 
 ---
@@ -105,8 +105,8 @@ Edit `s3/configs/ecomm_prod.yml`:
 ```yaml
 # Update S3 bucket name
 paths:
-  input_root: "s3a://YOUR-BUCKET/dsp_ga_2025em1100102_20112025/input/raw"
-  output_root: "s3a://YOUR-BUCKET/dsp_ga_2025em1100102_20112025/output"
+  input_root: "s3a://YOUR-BUCKET/ecommerce_seller_recommendation/input/raw"
+  output_root: "s3a://YOUR-BUCKET/ecommerce_seller_recommendation/output"
 
 # Adjust for your cluster
 spark:
@@ -119,13 +119,13 @@ spark:
 
 ```bash
 # Test recommendations
-python 2025em1100102/ecommerce_seller_recommendation/s3/tests/test_consumption_recommendations.py
+python ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/tests/test_consumption_recommendations.py
 
 # Validate logic
-python 2025em1100102/ecommerce_seller_recommendation/s3/tests/validate_logic.py
+python ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/tests/validate_logic.py
 
 # Check expected units
-python 2025em1100102/ecommerce_seller_recommendation/s3/tests/validate_expected_units.py
+python ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/tests/validate_expected_units.py
 ```
 
 ---
@@ -276,7 +276,7 @@ python -c "import boto3; s3=boto3.client('s3'); print(s3.list_buckets())"
 ## 📊 Output Directory Structure
 
 ```
-s3://bucket/dsp_ga_2025em1100102_20112025/
+s3://bucket/ecommerce_seller_recommendation/
 ├── input/raw/
 │   ├── company_sales/
 │   ├── competitor_sales/
@@ -332,7 +332,7 @@ s3://bucket/dsp_ga_2025em1100102_20112025/
 
 ## 📝 Version Info
 
-- **Project ID:** 2025em1100102
+- **Project ID:** ecommerce_seller_recommendation
 - **Spark Version:** 3.5.2
 - **Hudi Version:** 0.15.0
 - **Python:** 3.8+

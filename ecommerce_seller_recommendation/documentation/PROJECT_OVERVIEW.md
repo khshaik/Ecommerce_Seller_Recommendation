@@ -254,7 +254,7 @@ expected_units_sold, expected_revenue
 
 ```bash
 # Navigate to project root
-cd DSP_GA_2025em1100102_20112025/
+cd ecommerce_seller_recommendation/
 
 # Create virtual environment
 python3 -m venv .venv
@@ -280,16 +280,16 @@ Edit `s3/configs/ecomm_prod.yml`:
 
 ```bash
 # Company Sales ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_company_sales_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_company_sales_spark_submit.sh
 
 # Competitor Sales ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_competitor_sales_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_competitor_sales_spark_submit.sh
 
 # Seller Catalog ETL
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_seller_catalog_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/etl_seller_catalog_spark_submit.sh
 
 # Generate Recommendations
-./2025em1100102/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh
+./ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh
 ```
 
 ### Step 4: Verify Outputs
@@ -297,16 +297,16 @@ Edit `s3/configs/ecomm_prod.yml`:
 Check output directories:
 ```bash
 # Bronze (raw snapshots)
-s3a://2025em1100102/dsp_ga_2025em1100102_20112025/output/bronze/
+s3a://ecommerce_seller_recommendation/ecommerce_seller_recommendation/output/bronze/
 
 # Silver (cleaned data)
-s3a://2025em1100102/dsp_ga_2025em1100102_20112025/output/silver/
+s3a://ecommerce_seller_recommendation/ecommerce_seller_recommendation/output/silver/
 
 # Gold (aggregates)
-s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/gold/
+s3a://ecommerce_seller_recommendation/ecommerce_seller_recommendation/processed/gold/
 
 # Recommendations
-s3a://2025em1100102/dsp_ga_2025em1100102_20112025/processed/recommendations/
+s3a://ecommerce_seller_recommendation/ecommerce_seller_recommendation/processed/recommendations/
 ```
 
 ---
@@ -423,10 +423,10 @@ Located in `s3/tests/`:
 
 ```bash
 # Test recommendation generation
-python 2025em1100102/ecommerce_seller_recommendation/s3/tests/test_consumption_recommendations.py
+python ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/tests/test_consumption_recommendations.py
 
 # Validate business logic
-python 2025em1100102/ecommerce_seller_recommendation/s3/tests/validate_logic.py
+python ecommerce_seller_recommendation/ecommerce_seller_recommendation/s3/tests/validate_logic.py
 ```
 
 ---
