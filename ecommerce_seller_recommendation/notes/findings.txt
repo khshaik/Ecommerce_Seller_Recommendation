@@ -1,0 +1,1694 @@
+Artifacts
+- Project proposal
+- Data dictionary
+- Jupyter notebook
+- Power-point Presentation Deck (.pptx)
+- Data summmary (.csv)
+- Ouput files of PowerBI/Tableau dashboards
+
+Power-point presentation
+- Standard template
+
+Word document
+- Standard template
+
+Viva-voce dates declaration
+
+Week 4 interaction
+
+------
+which dataset to use ?..dirty/clean
+source to bronze
+clean to gold
+
+duplicates quarantined
+cow or mor
+
+local path/s3 verification
+metrics - total, quarantined, valid
+verify output to be correct or not ?..
+statistical metrics depicting seller(dup,cleaned), competitor(dup,cleaned), company(dup,cleaned)
+summary notes/ documentation (1-2 pages)
+
+setup
+  hudi
+  pyspark
+  python
+  java
+  jupyter
+
+---------
+# ✅ **Short Answer**
+
+You must compute **top-selling items separately**:
+
+### ✔ Top 10 items from **company sales** (internal best sellers)
+
+### ✔ Top 10 items from **competitor sales** (market best sellers)
+
+Then combine the missing items **after** these two lists are created.
+
+---
+
+# ❗ **Do NOT merge the company + competitor sales first and then pick top 10.**
+
+That is **wrong** for the assignment and will cost marks.
+
+---
+
+# ✅ **Why? (The reasoning the evaluator expects)**
+
+The **company’s top-selling items** represent:
+
+* Items customers prefer on **our platform**
+* Items the seller should add because they work well **specifically on our marketplace**
+
+The **competitor’s top-selling items** represent:
+
+* Items performing extremely well in the **broader market**
+* Items the company does NOT sell yet but could be added via the seller
+
+These two signals are **independent**.
+
+If you merge both first:
+
+* A strong competitor item might overshadow a strong internal item
+* Or vice versa
+* You lose visibility into *which channel* is driving the performance
+* Your expected revenue calculation becomes biased
+
+The assignment intentionally separates them so you evaluate two different ecosystems.
+
+---
+
+# 🧠 **What the evaluator expects**
+
+Your pipeline should do:
+
+### **Step 1 — Top-selling items (company)**
+
+Group company sales:
+
+```
+top_company_items = company_sales
+    .groupBy(item_id)
+    .agg(sum(units_sold), sum(revenue))
+    .orderBy(desc("units_sold"))
+    .limit(10)
+```
+
+### **Step 2 — Top-selling items (competitors)**
+
+Group competitor sales:
+
+```
+top_competitor_items = competitor_sales
+    .groupBy(item_id)
+    .agg(sum(units_sold))
+    .orderBy(desc("units_sold"))
+    .limit(10)
+```
+
+### **Step 3 — For each seller**
+
+Take:
+
+* Missing items from **top_company_items**
+* Missing items from **top_competitor_items**
+
+### **Step 4 — Combine them**
+
+Union or merge the two sets of missing items.
+
+---
+
+# 📌 **Important: Why separate is the correct method**
+
+Because the assignment uses **Expected Revenue formula** that relies on:
+
+```
+expected_units_sold = total_units_sold / number_of_sellers_currently_selling_it
+```
+
+This is:
+
+* Different for company data
+* Different for competitor data
+
+You cannot merge signals before computing the statistics.
+
+---
+
+# 🧩 **When merging is allowed**
+
+After you compute:
+
+* The top Company items
+* The top Competitor items
+
+You then merge **their missing-item recommendations** for each seller.
+
+This merged output becomes your final recommendation dataset.
+
+---
+
+# 🏆 **Conclusion**
+
+### ✔ Find top items **separately** for company and competitor
+
+### ✔ Identify missing items separately
+
+### ✔ Then merge the recommendation results
+
+---
+
+# If you want:
+
+I can generate the **exact PySpark code templates** for:
+
+* top-company-items pipeline
+* top-competitor-items pipeline
+* missing-item detection per seller
+* expected revenue calculation
+* final recommendation output
+
+Just tell me **“Generate code”**.
+
+
+-----
+
+Below is a **complete, crystal-clear explanation** of your assignment—**what it is, why it exists, how each part works, how the entities relate, what criteria will be graded**, and **exactly what you must deliver to get full marks**.
+
+This is written in a way that guarantees you understand the assignment end-to-end and can score **100%**.
+
+---
+
+# ✅ 1. **Overview — What Is This Assignment? (Simple Explanation)**
+
+You are building an **E-commerce Seller Recommendation System**.
+
+### 🔍 The platform has:
+
+* Sellers (each having their own item catalog)
+* Company sales data (how well items sell on the company platform)
+* Competitor sales data (how well items sell in the broader market)
+
+### 🎯 **Your goal**
+
+For every seller, **recommend the Top 10 selling items** they **do NOT currently sell**,
+using:
+
+* Internal company sales (top items per category)
+* Competitor sales (market top items)
+* Expected revenue calculation
+* Clean, validated input data
+* Hudi for ingestion + incremental processing
+* Medallion architecture (Bronze → Silver → Gold)
+
+### 👨‍🎓 **Why this assignment exists**
+
+It evaluates real-world data engineering skills:
+
+* ETL pipelines (incremental, idempotent)
+* Schema evolution handling via Hudi
+* Data cleaning & quarantine management
+* Building recommendation logic
+* Using PySpark for end-to-end workflows
+* YAML-driven configuration
+
+If you finish all parts correctly, you basically replicate a simplified **Amazon Marketplace Recommendation Engine**.
+
+---
+
+# ✅ 2. **Problem Definition (the core problem you are solving)**
+
+### ❗ Sellers do NOT sell all high-demand items.
+
+→ Some items are **top-sellers** in the company, but a specific seller does not sell them.
+
+→ Some items are **top-sellers in competitor data**, but the company doesn’t sell them.
+
+### Your system must answer:
+
+> **“Which top-selling items should each seller add to their catalog to maximize revenue?”**
+
+To answer this, you must:
+
+1. Identify top-selling items (company + competitor)
+2. Compare each seller's catalog with those lists
+3. Find missing items
+4. Compute expected revenue if seller adds them
+
+---
+
+# ✅ 3. **Inter-relationship Between Entities (very important for understanding)**
+
+Here is a simplified conceptual model:
+
+```
+                 ┌────────────────────────┐
+                 │   Seller Catalog       │
+                 │ seller_id + item_id    │
+                 │ item_name, category    │
+                 └─────────┬──────────────┘
+                           │
+                           │ Join on item_id
+                           ▼
+                 ┌────────────────────────┐
+                 │ Company Sales Data     │
+                 │ item_id                │
+                 │ units_sold, revenue    │
+                 └─────────┬──────────────┘
+                           │
+                           │ Compare with competitor
+                           ▼
+                 ┌────────────────────────┐
+                 │ Competitor Sales Data  │
+                 │ seller_id + item_id    │
+                 │ units_sold, price      │
+                 └─────────┬──────────────┘
+                           │
+                           ▼
+             ┌──────────────────────────────┐
+             │  Recommendation Engine        │
+             │  top items → missing items →  │
+             │  expected revenue             │
+             └──────────┬────────────────────┘
+                        ▼
+            ┌────────────────────────────────┐
+            │   Output Recommendation CSV     │
+            └────────────────────────────────┘
+```
+
+### How they logically connect:
+
+| Entity           | Key                  | Relationships                               |
+| ---------------- | -------------------- | ------------------------------------------- |
+| Seller Catalog   | (seller_id, item_id) | Defines what sellers currently sell         |
+| Company Sales    | item_id              | Used to identify internal top-selling items |
+| Competitor Sales | (seller_id, item_id) | Used to identify market-level best sellers  |
+| Recommendation   | seller_id, item_id   | Output of missing top items                 |
+
+### Why these relationships matter:
+
+* **item_id** is the bridge across ALL datasets.
+* Seller catalog is used to find **what is missing**.
+* Company/Competitor data is used to find **what is worth recommending**.
+
+---
+
+# ✅ 4. **What exactly must be built (step-by-step with reasoning)**
+
+Your submission must include **4 PySpark programs**:
+
+### **📌 Program 1 — etl_seller_catalog.py**
+
+Your job:
+
+* Read raw seller catalog CSV
+* Clean the data
+* Apply DQ rules
+* Put bad data in a quarantine folder
+* Write cleaned data into a Hudi table
+
+### **📌 Program 2 — etl_company_sales.py**
+
+Your job:
+
+* Clean company sales data
+* Validate item_id, revenue, units sold, sale_date
+* Push invalid records to quarantine
+* Write cleaned data into a Hudi table
+
+### **📌 Program 3 — etl_competitor_sales.py**
+
+Similar tasks:
+
+* Clean the data
+* Validate fields
+* Quarantine invalid rows
+* Write cleaned data into a Hudi table
+
+### **📌 Program 4 — consumption_recommendation.py**
+
+This is your **Gold layer** program.
+You must:
+
+* Read the 3 Hudi tables
+* Aggregate top-selling items (company + competitor)
+* Compare each seller’s catalog to find missing items
+* Compute:
+
+  ```
+  expected_units_sold = total_units_sold / number_of_sellers_selling_that_item
+  expected_revenue = expected_units_sold * marketplace_price
+  ```
+* Produce final CSV
+
+This is the **actual recommendation engine**.
+
+---
+
+# ✅ 5. **How to score full marks in the assignment (VERY IMPORTANT)**
+
+Below is EXACTLY what the evaluator expects to see.
+
+---
+
+## ✔ **Section 1 — ETL / Hudi Setup (15 Marks)**
+
+To get **ALL marks**, you must have:
+
+### ✔ Clean code for:
+
+* etl_seller_catalog.py
+* etl_company_sales.py
+* etl_competitor_sales.py
+
+### ✔ YAML configuration-driven pipeline
+
+(Do NOT hard-code file paths.)
+
+### ✔ Hudi table writing with:
+
+* Primary key set correctly
+* PreCombine field defined
+* Incremental upsert mode
+* Schema evolution allowed
+
+### ✔ Data Cleaning Steps fully implemented
+
+### ✔ Proper DQ validations
+
+Every rule must:
+
+* Check the condition
+* Add invalid rows to quarantine
+* Write valid rows to Hudi
+
+### ✔ Quarantine folder structure:
+
+```
+quarantine/<dataset-name>/date=<run-date>/dq_failure_reason=<reason>
+```
+
+### ✔ No Hudi tables overwritten incorrectly
+
+They must be:
+
+* `MERGE_ON_READ` or `COPY_ON_WRITE`
+* Written in incremental upsert mode
+
+**If you miss ANY of this → you lose marks.**
+
+---
+
+## ✔ **Section 2 — Consumption Layer (5 Marks)**
+
+To get all 5 marks:
+
+### ✔ Read all 3 Hudi tables
+
+From YAML configuration
+
+### ✔ Transformations:
+
+* Group company sales → top items per category
+* Group competitor sales → top items
+* Compare seller catalog vs. top items → missing items
+
+### ✔ Recommendation logic:
+
+* expected_units_sold calculation
+* expected_revenue calculation
+* Use most appropriate market_price (company or competitor)
+
+### ✔ Final output CSV must include:
+
+* seller_id
+* item_id
+* item_name
+* category
+* market_price
+* expected_units_sold
+* expected_revenue
+
+And MUST be written with:
+
+* overwrite mode
+* proper path
+
+---
+
+## ✔ **Section 3 — Project Structure + Scripts (5 Marks)**
+
+To get these:
+
+* Folder structure EXACTLY as required
+* Shell scripts prepared for spark-submit
+* YAML config in `configs/ecomm_prod.yml`
+
+---
+
+## ✔ **Section 4 — Code Quality (5 Marks)**
+
+To score this:
+
+* Everything must be modular
+* Functions well-named
+* Comments present
+* Code does not break on missing columns (schema evolution)
+
+---
+
+## ✔ **Section 5 — Documentation (Optional but helps)**
+
+A simple `README.md` explaining:
+
+* How to run each script
+* Example spark-submit commands
+* Folder structure
+
+---
+
+# ✅ 6. **How to think about this assignment (so you deliver top-quality work)**
+
+This assignment is testing your skills as a **Data Engineer**:
+
+### You must show:
+
+✔ Understanding of raw → clean → curated → gold data flows
+✔ Ability to handle dirty real-world data
+✔ Ability to build pipelines with config-driven design
+✔ Knowledge of Hudi (upserts + schema evolution)
+✔ Strong transformation logic
+✔ Recommendation logic
+✔ Good engineering practices
+
+---
+
+# ✅ 7. **If you want, I can generate next:**
+
+Just tell me which one:
+
+### **A) Complete solution code for all 4 programs (PySpark, Hudi, YAML)**
+
+### **B) YAML configuration file ready to submit**
+
+### **C) All 4 spark-submit scripts**
+
+### **D) Full end-to-end project folder zipped (I will generate code here)**
+
+### **E) Explanation for viva questions**
+
+### **F) Summary charts / diagrams**
+
+---
+
+# 🎯 **Final Recommendation**
+
+If your goal is “full marks,” then choose:
+
+👉 **Option D — full end-to-end project folder code**
+I’ll generate all 4 scripts, YAML, and shell commands.
+
+Tell me **A, B, C, D, E, or F**, and I’ll generate it next.
+
+----
+
+Below is a **clear, complete, assignment-oriented explanation** of:
+
+* How the **Medallion Architecture** works
+* How **Quarantine** fits into it
+* When and where to put **dirty data**
+* The exact **sequence** of validation → cleaning → Hudi → consumption
+* How everything ties together for **full marks**
+
+This is explained specifically for **your assignment**, not generic theory.
+
+---
+
+# ⭐ 1. What is the Medallion Architecture?
+
+It is a **three-layer data engineering architecture** designed for ETL pipelines:
+
+### **1. Bronze Layer → Raw Data**
+
+* Direct ingest of **raw datasets** as they arrive
+* Minimal processing
+* Schema may be loose, dirty, inconsistent
+* No denial of bad data here (we accept everything first)
+
+### **2. Silver Layer → Cleaned, Validated Data**
+
+* Data Cleaning
+* Data Quality (DQ) checks
+* Type casting
+* Null checks
+* Deduplication
+* Standardization
+* Output = **clean, reliable, structured tables**
+* Written to **Hudi** (upsertable, incremental)
+
+### **3. Gold Layer → Business-level Aggregations**
+
+* Business logic applied
+* Recommendation Engine
+* Final KPI tables
+* Highly curated
+* Used by product teams, lookups, downstream apps
+
+---
+
+# ⭐ 2. What is “Quarantine Zone” in this assignment?
+
+The assignment **adds an extra zone** outside of Medallion:
+👉 **Quarantine = Storage for BAD / DIRTY records**
+
+**Purpose:**
+
+* When data fails validation in Silver processing
+* It MUST NOT go into Hudi tables
+* It MUST be written to a structured quarantine folder with reason code
+
+This is **critical** for scoring full points.
+
+---
+
+# ⭐ 3. How does everything fit together for this assignment?
+
+### Your assignment requires:
+
+### ✔ Use Medallion
+
+### ✔ Use Hudi for clean tables
+
+### ✔ Use Quarantine for dirty data
+
+### ✔ Use consumption layer for recommendation logic
+
+Here is the **layer-by-layer mapping**:
+
+---
+
+# ⭐ 4. Assignment Architecture (End-to-End)
+
+```
+                    RAW LANDING (CSV)
+                          │
+                          ▼
+            ┌────────────────────────────────┐
+            │          BRONZE LAYER          │
+            │  (Raw ingestion - no cleaning) │
+            └────────────────────────────────┘
+                          │
+                          ▼
+                 VALIDATIONS & DQ CHECKS
+                   ├── good rows → SILVER
+                   └── bad rows → QUARANTINE
+                          │
+                          ▼
+            ┌────────────────────────────────┐
+            │          SILVER LAYER          │
+            │ (Clean, standardized, Hudi)    │
+            └────────────────────────────────┘
+                          │
+                          ▼
+          GOLD TRANSFORMATIONS (Recommend Top Items)
+                          │
+                          ▼
+            ┌────────────────────────────────┐
+            │           GOLD LAYER           │
+            │ Final Recommended Items Output │
+            └────────────────────────────────┘
+```
+
+---
+
+# ⭐ 5. What goes into each layer? (VERY IMPORTANT)
+
+## 🔶 **Bronze Layer — Raw Data (No Cleaning)**
+
+For each dataset:
+
+* Seller catalog
+* Company sales
+* Competitor sales
+
+You simply read the CSV and write as-is:
+
+**Operations in Bronze:**
+
+* Read raw data
+* No DQ checks
+* No transformations
+* Write to raw folder
+
+File path structure example:
+
+```
+bronze/seller_catalog/raw_run_date=2025-01-01/
+
+----------------------------------------------------------------------
+# Company recommendation — step-by-step (with a small sample and worked calculations)
+----------------------------------------------------------------------
+
+## 1) Inputs — what we read
+
+The routine reads two Hudi tables (already produced by earlier ETLs):
+
+* **company_sales_data** — sales rows (one row per sale record / item) with at least:
+
+  * `item_id`, `units_sold`, `marketplace_price` (and sometimes `item_name`, `category`)
+* **seller_catalog_data** — seller catalogue with:
+
+  * `seller_id`, `item_id`, `item_name`, `category`
+
+### Example input rows
+
+**company_sales_data (raw simplified)**
+
+| item_id | units_sold | marketplace_price |
+| ------- | ---------: | ----------------: |
+| I1      |        100 |            500.00 |
+| I1      |         50 |            520.00 |
+| I2      |        200 |            100.00 |
+| I3      |         30 |            750.00 |
+| I4      |        500 |             10.00 |
+| I5      |         90 |            120.00 |
+
+**seller_catalog_data (example sellers)**
+
+| seller_id | item_id | item_name | category   |
+| --------- | ------- | --------- | ---------- |
+| S-A       | I1      | Shoe A    | Footwear   |
+| S-A       | I3      | Shoe C    | Footwear   |
+| S-B       | I2      | Shirt B   | Apparel    |
+| S-C       | I4      | Pen D     | Stationery |
+| S-C       | I5      | Bag E     | Bags       |
+
+---
+
+## 2) Normalize numeric columns
+
+The code ensures `units_sold` and `marketplace_price` are numeric (casts to doubles).
+No change to values here in our example.
+
+---
+
+## 3) Aggregate company sales per item (total units + avg price)
+
+We aggregate the company sales table by `item_id` to compute the **total units sold** across all company rows and a representative market price (average):
+
+`company_agg = company_df.groupBy("item_id").agg(sum(units_sold) as total_units, avg(marketplace_price) as market_price)`
+
+Using our example:
+
+* For **I1**: total_units = 100 + 50 = **150**
+  market_price ≈ avg(500, 520) = **510.00**
+* I2: total_units = **200**, market_price = **100.00**
+* I3: total_units = **30**, market_price = **750.00**
+* I4: total_units = **500**, market_price = **10.00**
+* I5: total_units = **90**, market_price = **120.00**
+
+Resulting `company_agg`:
+
+| item_id | total_units | market_price |
+| ------- | ----------: | -----------: |
+| I4      |         500 |        10.00 |
+| I2      |         200 |       100.00 |
+| I1      |         150 |       510.00 |
+| I5      |          90 |       120.00 |
+| I3      |          30 |       750.00 |
+
+---
+
+## 4) Enrich with item metadata (name + category)
+
+The code joins `company_agg` to a deduplicated subset of `seller_catalog_data` to pick up `item_name` and `category` for each `item_id`.
+
+Suppose item metadata yields categories:
+
+| item_id | item_name | category   |
+| ------- | --------- | ---------- |
+| I1      | Shoe A    | Footwear   |
+| I2      | Shirt B   | Apparel    |
+| I3      | Shoe C    | Footwear   |
+| I4      | Pen D     | Stationery |
+| I5      | Bag E     | Bags       |
+
+After join `company_agg` → now each item has total_units, market_price, item_name, category.
+
+---
+
+## 5) Compute **top-N per category** (top-10 by default)
+
+The code ranks items **within each category** by `total_units` and keeps rank ≤ 10 (top 10). In our example, category groups:
+
+* **Footwear**: I1 (150), I3 (30) → Top items: I1, I3
+* **Apparel**: I2 (200) → Top items: I2
+* **Stationery**: I4 (500) → Top items: I4
+* **Bags**: I5 (90) → Top items: I5
+
+So `company_top10` (per category) is the set of those items.
+
+---
+
+## 6) Build all (seller × top_item) candidate pairs
+
+We want, for each seller, the list of top items they **should** carry (the top items from company per category). The code:
+
+* obtains the distinct sellers from `seller_catalog_data` → `sellers` (S-A, S-B, S-C)
+* cross-joins `sellers` with `company_top10` → produces all combinations (S-A × each top item, S-B × each, etc.).
+  Example pairs: (S-A, I1), (S-A, I2), (S-A, I3), (S-A, I4), (S-A, I5), and so on for S-B, S-C.
+
+---
+
+## 7) Identify **missing items** per seller (left_anti join)
+
+We remove those pairs where the seller already sells the item:
+
+* Left: candidate_items (seller × top_item)
+* Right: seller_items (seller × item_id from seller_catalog_data)
+* Do `left_anti` join → keep only (seller, item) pairs where seller does **not** already have that item
+
+Example, after left_anti:
+
+* S-A already has I1 and I3 → missing: I2, I4, I5
+* S-B already has I2 → missing: I1, I3, I4, I5
+* S-C already has I4 and I5 → missing: I1, I2, I3
+
+So `missing` rows look like:
+
+| seller_id | item_id | item_name | category | total_units | market_price |
+| --------- | ------- | --------- | -------- | ----------: | -----------: |
+| S-A       | I2      | Shirt B   | Apparel  |         200 |       100.00 |
+| S-A       | I4      | Pen D     | Station. |         500 |        10.00 |
+| S-A       | I5      | Bag E     | Bags     |          90 |       120.00 |
+| S-B       | I1      | Shoe A    | Footwear |         150 |       510.00 |
+| ...       | ...     | ...       | ...      |         ... |          ... |
+
+---
+
+## 8) Estimate `expected_units_sold` per missing item
+
+Business logic in the code:
+
+* Compute `seller_count` = number of unique sellers who currently sell that `item_id` (from seller_catalog_data).
+
+  * Example counts from our seller_catalog:
+
+    * I1 sold by S-A → seller_count = 1
+    * I2 sold by S-B → seller_count = 1
+    * I3 sold by S-A → seller_count = 1
+    * I4 sold by S-C → seller_count = 1
+    * I5 sold by S-C → seller_count = 1
+* expected_units_sold = `total_units` / `seller_count`
+  (i.e., distribute historical total units across existing sellers — a simple heuristic)
+
+**Worked examples:**
+
+* For **S-A missing I2**:
+
+  * total_units (I2) = 200, seller_count(I2)=1 → expected_units_sold = 200 / 1 = **200**
+* For **S-B missing I1**:
+
+  * total_units (I1) = 150, seller_count(I1)=1 → expected_units_sold = **150**
+* For **S-A missing I4**:
+
+  * total_units (I4) = 500, seller_count(I4)=1 → expected_units_sold = **500**
+
+**Edge case handled in code:**
+If `seller_count` is null/0 (rare: item not sold by any seller in the catalog metadata), code uses `total_units` as fallback (i.e., expected_units_sold = total_units).
+
+---
+
+## 9) Estimate `expected_revenue` for the recommendation
+
+Formula used:
+
+```
+expected_revenue = expected_units_sold * market_price
+```
+
+Examples:
+
+* S-A missing I2: expected_units_sold = 200, market_price = 100.00 → expected_revenue = 200 * 100.00 = **20,000.00**
+* S-B missing I1: expected_units_sold = 150, market_price = 510.00 → expected_revenue = 150 * 510.00 = **76,500.00**
+* S-A missing I4: expected_units_sold = 500, market_price = 10.00 → expected_revenue = 500 * 10.00 = **5,000.00**
+
+Results are rounded (code uses `round(..., 2)` when selecting final columns).
+
+---
+
+## 10) Final output columns and write
+
+The code builds the final recommendation DataFrame with columns:
+
+```
+seller_id,
+item_id,
+item_name,
+category,
+market_price,             -- rounded to 2 decimals
+expected_units_sold,      -- rounded to 2 decimals
+expected_revenue          -- rounded to 2 decimals
+```
+
+Using the examples above, sample output rows:
+
+| seller_id | item_id | item_name | category   | market_price | expected_units_sold | expected_revenue |
+| --------- | ------- | --------- | ---------- | -----------: | ------------------: | ---------------: |
+| S-A       | I2      | Shirt B   | Apparel    |       100.00 |              200.00 |        20,000.00 |
+| S-A       | I4      | Pen D     | Stationery |        10.00 |              500.00 |         5,000.00 |
+| S-B       | I1      | Shoe A    | Footwear   |       510.00 |              150.00 |        76,500.00 |
+| ...       | ...     | ...       | ...        |          ... |                 ... |              ... |
+
+Finally the code writes this DataFrame to CSV (coalesce(1), mode="overwrite") into the configured gold folder:
+
+```
+/.../local/data/output/gold/recommendation/company
+```
+
+---
+
+## 11) Summary of the logic (one-line per step)
+
+1. Read company Hudi sales table and seller catalog Hudi table.
+2. Aggregate company sales to `total_units` and `market_price` per `item_id`.
+3. Attach `item_name` & `category` from seller catalog metadata.
+4. For each category, rank and pick top-10 items (by total_units).
+5. For each seller, build a cartesian list of those top items and remove items the seller already sells → these are *missing* items.
+6. Compute `seller_count` (how many sellers currently sell that item).
+7. expected_units_sold = total_units / seller_count (fallback = total_units when seller_count == 0).
+8. expected_revenue = expected_units_sold × market_price.
+9. Save recommendations with `seller_id, item_id, item_name, category, market_price, expected_units_sold, expected_revenue`.
+
+---
+
+## 12) Practical notes, assumptions & possible improvements
+
+* **Heuristic:** expected_units_sold = total_units / seller_count is a simple allocation heuristic. It assumes historical demand is split evenly among sellers that currently sell the item. You may want to refine:
+
+  * Use category/region-specific scaling
+  * Use seller-specific capacity / historical seller performance
+  * Use competitor demand to estimate uplift
+* **market_price** uses average company price; if price varies per seller/row you could choose median, latest, or a seller-specific suggested price.
+* **Top-N** is fixed at 10 in the code — make it configurable if you want top-5 / top-20.
+* **Missing metadata:** items that appear in company_sales but not in seller catalog (no metadata) will get `item_name`/`category` NULL — consider a metadata lookup table.
+* **Rounding and datatypes:** outputs are rounded to 2 decimals; keep internal math in double precision to avoid rounding drift before final presentation.
+
+---
+
+If you'd like, I can:
+
+* show the actual Spark transformations as SQL for each step,
+* replace `total_units/seller_count` heuristic with a more advanced estimator (e.g., weighted by seller historical share),
+* or add a small unit-test notebook that demonstrates the whole workflow on this tiny example and writes the CSV. Which next?
+
+bronze/company_sales/raw_run_date=2025-01-01/
+bronze/competitor_sales/raw_run_date=2025-01-01/
+```
+
+---
+
+# 🔷 **Silver Layer — Cleaned, Validated Data (Hudi)**
+
+This is the **most important layer**.
+
+At this stage, you MUST:
+
+* Apply data cleaning
+* Apply data quality validation rules
+* Split good/bad rows
+* Write good rows → Hudi Silver tables
+* Write bad rows → Quarantine folders
+
+### ✨ **This layer is fully incremental + Hudi-based**
+
+**Silver table examples:**
+
+```
+silver/seller_catalog_hudi/
+silver/company_sales_hudi/
+silver/competitor_sales_hudi/
+```
+
+---
+
+# 🔸 **Gold Layer — Recommendation Engine**
+
+This is where you combine cleansed silver Hudi tables and generate:
+
+* Top 10 company items
+* Top 10 competitor items
+* Missing items per seller
+* Expected units sold
+* Expected revenue
+* Final recommendation output (CSV)
+
+```
+gold/ecomm_recommendations/
+```
+
+---
+
+# ⭐ 6. When do we apply validation checks?
+
+**All validation checks are done BEFORE writing to Silver (Hudi).**
+
+### **Sequence:**
+
+### Step 1 — Read Bronze data
+
+Raw read, no checks.
+
+### Step 2 — Apply DQ & Cleaning
+
+Examples:
+
+* Missing item_id → quarantine
+* Invalid pricing → quarantine
+* Negative units_sold → quarantine
+* Null seller_id → quarantine
+* Wrong date format → quarantine
+* Duplicate rows → dedupe in silver
+* Trim spaces, cast types, standardize columns → cleaning
+
+### Step 3 — Split data
+
+```
+valid_df     → Silver/Hudi  
+invalid_df   → Quarantine/
+```
+
+### Step 4 — Write cleaned valid data to Hudi
+
+With:
+
+* primaryKey = item_id or seller_id+item_id
+* preCombine = update_ts
+* recordKey = item_id
+* incremental upsert
+
+### Step 5 — Gold layer uses only Silver data
+
+Gold = no dirty data, no risk, only business-level transformations.
+
+---
+
+# ⭐ 7. Example Data Flow (Concrete Example)
+
+## **Seller Catalog Dataset (Bronze → Silver)**
+
+**Bronze Read:**
+
+```
+seller_id,item_id,item_name,category
+101,1,Dove Soap,Beauty
+101, ,Lux Bathing,Beauty       → invalid (missing item_id)
+102,3,Pears Soap,Beauty
+```
+
+**DQ Validation Rules:**
+
+* item_id must not be null
+* seller_id must not be null
+* category must be in known categories
+* trim spaces
+* dedupe rows
+
+### Result:
+
+| Row       | Status               |
+| --------- | -------------------- |
+| 101,1,... | valid → SILVER       |
+| 101, ,... | invalid → QUARANTINE |
+| 102,3,... | valid → SILVER       |
+
+**Write to Silver Hudi.**
+
+---
+
+## **Company Sales Dataset (Bronze → Silver)**
+
+**DQ checks:**
+
+* item_id not null
+* units_sold > 0
+* revenue >= 0
+* sale_date must be valid date
+* dedupe
+
+Bad rows → quarantine.
+
+---
+
+## **Competitor Sales Dataset (Bronze → Silver)**
+
+Same pattern:
+
+* Validate seller_id
+* item_id
+* units_sold
+* market_price
+* dedupe
+
+Bad rows → quarantine.
+
+---
+
+# ⭐ 8. Quarantine Zone Explained (When and Where)
+
+### Quarantine = INVALID DATA BUCKET
+
+Every dataset must create folders like:
+
+```
+quarantine/seller_catalog/date=2025-01-01/reason=invalid_item_id
+quarantine/company_sales/date=2025-01-01/reason=negative_units_sold
+quarantine/competitor_sales/date=2025-01-01/reason=invalid_market_price
+```
+
+### Why required?
+
+* For debugging
+* To trace why rows were rejected
+* To prevent polluting Silver & Gold layers
+* It is mandatory for full marks
+
+---
+
+# ⭐ 9. How to describe this architecture to get full marks
+
+You need to mention:
+
+### ✔ Raw data lands in Bronze
+
+### ✔ Data cleaning & DQ happens in Silver
+
+### ✔ Dirty data moves to Quarantine
+
+### ✔ Cleaned, structured data stored in Hudi in Silver
+
+### ✔ Gold layer performs business logic (top items, missing items, recommendations)
+
+Mention the **advantages**:
+
+* Incremental upserts
+* Schema evolution
+* Scalability
+* Traceability
+* Separation of concerns
+* Data quality enforcement
+
+---
+
+# ⭐ 10. Perfect Answer (Ready to Use in the Report & Viva)
+
+If you need, I can generate:
+
+* Diagram for Medallion + Quarantine
+* Explanation paragraph for the assignment report
+* Code templates for Bronze/Silver/Gold pipelines
+* DQ rule table
+* README explanation
+
+---
+
+# 👉 If you want next:
+
+**“Generate diagrams”**
+**“Generate code for Bronze/Silver/Gold”**
+**“Generate README explanation”**
+**“Generate DQ rules table”**
+
+-----------
+
+----------------------------------------------------------------------
+# Competitor recommendation — step-by-step (with a small sample and worked calculations)
+----------------------------------------------------------------------
+
+Below is the **same clean, structured, step-by-step explanation** that I gave for *company recommendation*, but now applied to the **competitor recommendation** logic.
+
+I follow the *exact* flow of your `run_competitor_recommendation()` routine — with concrete sample data and full calculations.
+
+---
+
+# ⭐ COMPETITOR RECOMMENDATION — STEP-BY-STEP EXPLANATION
+
+*(using a small worked example with calculations)*
+
+The purpose of the **competitor recommendation** pipeline is:
+
+> Identify the top items sold by competitors in the market, compare them against each seller's catalog, find missing items, estimate potential business value, and generate output recommendations.
+
+---
+
+# 1) Inputs — what the function reads
+
+The routine loads two Hudi tables:
+
+### **1. competitor_sales_data**
+
+Columns typically include:
+
+* `seller_id`, `item_id`,
+* `units_sold`,
+* `marketplace_price`,
+* and sometimes `item_name`, `category` (from prior ETL)
+
+### **2. seller_catalog_data**
+
+* seller’s current items
+* includes `seller_id`, `item_id`, `item_name`, `category`
+
+---
+
+# 2) Example sample input
+
+## competitor_sales_data (example rows)
+
+| competitor_id | item_id | units_sold | marketplace_price |
+| ------------- | ------- | ---------- | ----------------- |
+| C1            | I1      | 300        | 550.00            |
+| C1            | I2      | 100        | 99.00             |
+| C2            | I1      | 200        | 560.00            |
+| C2            | I3      | 400        | 800.00            |
+| C3            | I4      | 500        | 10.00             |
+| C3            | I5      | 90         | 130.00            |
+
+## seller_catalog_data (same as earlier example)
+
+| seller_id | item_id | item_name    | category   |
+| --------- | ------- | ------------ | ---------- |
+| S-A       | I1      | Shoe A       | Footwear   |
+| S-A       | I3      | Shoe C       | Footwear   |
+| S-B       | I2      | Formal Shirt | Apparel    |
+| S-C       | I4      | Pen D        | Stationery |
+| S-C       | I5      | Bag E        | Bags       |
+
+---
+
+# 3) Convert numerics → cast units_sold, marketplace_price to numeric types
+
+No value change; ensures consistency for Spark.
+
+---
+
+# 4) Aggregate competitor sales per item
+
+We group competitor data to calculate:
+
+* **total_units** sold across all competitors
+* **market_price** = average competitor price
+
+### Example:
+
+**Aggregating sample competitor rows:**
+
+### Item I1
+
+* units_sold: 300 + 200 = **500**
+* avg price = avg(550, 560) = **555.00**
+
+### Item I2
+
+* units_sold: 100
+* price = 99.00
+
+### Item I3
+
+* units_sold = 400
+* price = 800.00
+
+### Item I4
+
+* units_sold = 500
+* price = 10.00
+
+### Item I5
+
+* units_sold = 90
+* price = 130.00
+
+---
+
+# 5) Attach metadata (item_name + category)
+
+Join competitor aggregated items with unique item metadata from seller catalog.
+
+Result (example):
+
+| item_id | item_name | category   | total_units | market_price |
+| ------- | --------- | ---------- | ----------- | ------------ |
+| I1      | Shoe A    | Footwear   | 500         | 555.00       |
+| I2      | Shirt B   | Apparel    | 100         | 99.00        |
+| I3      | Shoe C    | Footwear   | 400         | 800.00       |
+| I4      | Pen D     | Stationery | 500         | 10.00        |
+| I5      | Bag E     | Bags       | 90          | 130.00       |
+
+---
+
+# 6) Determine competitor **top-N per category** (N = 10)
+
+Compute RANK per category using `total_units` and keep top 10.
+
+### Footwear
+
+* I1 → 500 (rank 1)
+* I3 → 400 (rank 2)
+
+### Apparel
+
+* I2 → 100
+
+### Stationery
+
+* I4 → 500
+
+### Bags
+
+* I5 → 90
+
+Thus `competitor_top10` = all these items.
+
+---
+
+# 7) Build seller × competitor_top10 combinations
+
+We generate all pairs:
+
+(seller, top_item)
+
+For sellers S-A, S-B, S-C
+and items I1, I2, I3, I4, I5
+
+Pairs include:
+(S-A, I1), (S-A, I2), … (S-C, I5)
+
+---
+
+# 8) Identify missing items per seller
+
+We drop pairs where the seller already sells the item.
+
+### Missing items:
+
+| Seller | Already sells | Missing from competitor top list |
+| ------ | ------------- | -------------------------------- |
+| S-A    | I1, I3        | I2, I4, I5                       |
+| S-B    | I2            | I1, I3, I4, I5                   |
+| S-C    | I4, I5        | I1, I2, I3                       |
+
+Examples (after filtering):
+
+| seller_id | item_id | item_name | category | total_units | market_price |
+| --------- | ------- | --------- | -------- | ----------- | ------------ |
+| S-A       | I2      | Shirt B   | Apparel  | 100         | 99.00        |
+| S-A       | I4      | Pen D     | Stat.    | 500         | 10.00        |
+| S-A       | I5      | Bag E     | Bags     | 90          | 130.00       |
+| S-B       | I1      | Shoe A    | Footwear | 500         | 555.00       |
+| ...       | ...     | ...       | ...      | ...         | ...          |
+
+---
+
+# 9) Compute **seller_count** for competitor-based logic
+
+`seller_count` = number of sellers currently selling that item (from seller_catalog)
+
+Using earlier metadata:
+
+* I1: 1 seller (S-A)
+* I2: 1 seller (S-B)
+* I3: 1 seller (S-A)
+* I4: 1 seller (S-C)
+* I5: 1 seller (S-C)
+
+---
+
+# 10) Compute **expected_units_sold**
+
+Formula:
+
+```
+expected_units_sold = total_units / seller_count
+```
+
+Apply:
+
+### Example:
+
+* S-A missing I2:
+
+  * total_units = 100
+  * seller_count = 1
+    → expected_units_sold = 100 / 1 = **100**
+
+* S-B missing I1:
+
+  * total_units = 500
+  * seller_count = 1
+    → expected_units_sold = **500**
+
+* S-C missing I3:
+
+  * total_units = 400
+  * seller_count = 1
+    → expected_units_sold = **400**
+
+If seller_count = 0 (item not sold by any seller), the code uses fallback:
+
+```
+expected_units_sold = total_units
+```
+
+---
+
+# 11) Compute **expected_revenue**
+
+Formula:
+
+```
+expected_revenue = expected_units_sold × market_price
+```
+
+### Examples
+
+| Case           | Calculation  | expected_revenue |
+| -------------- | ------------ | ---------------- |
+| S-A missing I2 | 100 × 99.00  | **9,900.00**     |
+| S-B missing I1 | 500 × 555.00 | **277,500.00**   |
+| S-C missing I3 | 400 × 800.00 | **320,000.00**   |
+
+---
+
+# 12) Prepare final recommendation output
+
+Each row contains:
+
+```
+seller_id
+item_id
+item_name
+category
+market_price
+expected_units_sold
+expected_revenue
+```
+
+### Example output rows:
+
+| seller_id | item_id | item_name | category   | market_price | expected_units_sold | expected_revenue |
+| --------- | ------- | --------- | ---------- | -----------: | ------------------: | ---------------: |
+| S-A       | I2      | Shirt B   | Apparel    |        99.00 |              100.00 |         9,900.00 |
+| S-A       | I4      | Pen D     | Stationery |        10.00 |              500.00 |         5,000.00 |
+| S-B       | I1      | Shoe A    | Footwear   |       555.00 |              500.00 |       277,500.00 |
+| S-C       | I3      | Shoe C    | Footwear   |       800.00 |              400.00 |       320,000.00 |
+
+---
+
+# 13) Write to GOLD zone
+
+The output is written as:
+
+```
+gold/recommendation/competitor
+```
+
+With mode:
+
+```
+coalesce(1).write.csv(overwrite)
+```
+
+---
+
+# 🎯 Summary of Competitor Recommendation Logic
+
+1. Read competitor sales Hudi table.
+2. Read seller catalog Hudi table.
+3. Aggregate competitor sales (total units + avg market price per item).
+4. Add item metadata (name, category).
+5. Select **top-10 competitor items per category**.
+6. Cross-join sellers with these top items.
+7. Remove items already in seller catalog → missing items.
+8. Compute seller_count per item.
+9. expected_units_sold = total_units / seller_count.
+10. expected_revenue = expected_units_sold × market_price.
+11. Produce final recommendation rows.
+12. Write to GOLD CSV folder.
+
+---
+
+If you'd like, I can now generate:
+
+✔ **A single combined workflow diagram**
+✔ **A unified flow for both company + competitor recommendation**
+✔ **A PowerPoint explaining the entire recommendation engine**
+
+Just say **“generate ppt”** or **“generate architecture diagram”**.
+
+
+---
+
+📋 Assessment Results: ✅ ALL REQUIREMENTS MET (11/11)
+Requirements Verified:
+Requirement Status  Details
+YAML-configurable pipeline  ✅ config.yaml - all paths & formats configured
+CSV/JSON reading  ✅ Customers/Products (JSON), Orders (CSV)
+Incremental data processing ✅ Watermark tracking via updated_at field
+Apache Hudi integration ✅ Schema evolution enabled, idempotent upserts
+Data cleaning & DQ checks ✅ 10+ validation rules (NOT NULL, regex, ranges, deduplication)
+Quarantine zone ✅ Bad data isolated in control/quarantine before gold layer
+Medallion architecture  ✅ Bronze → Silver → Gold + Quarantine zone
+3 separate pipelines  ✅ Customers, Products, Orders (each with own ETL logic)
+Final Hudi output tables  ✅ 8 gold KPI tables + 3 silver layer tables
+Overwrite mode  ✅ mode("overwrite") in migration script
+Schema evolution  ✅ auto.evolution: true - handles new columns automatically
+
+Bronze Layer: Raw CSV/JSON data (Delta)
+Silver Layer: Cleaned & validated data (Delta) - with optional Hudi upgrade
+Gold Layer: Business KPIs (Hudi with idempotent upserts)
+Quarantine Zone: Failed records isolated for investigation
+
+| Table Type              | File Format                          | Supports Compaction? | Usage                            |
+| ----------------------- | ------------------------------------ | -------------------- | -------------------------------- |
+| **Copy-on-Write (COW)** | Writes new Parquet files for updates | ❌ **No**             | Simpler, good for read-heavy     |
+| **Merge-on-Read (MOR)** | Writes delta logs and compacts later | ✅ **Yes**            | Write-heavy, incremental queries |
+
+----
+
+Analysis: Why Count is 2,000 (Not 2,040) — Detailed Breakdown
+Summary of Output File
+Total rows: 2,001 (including header) = 2,000 data rows
+Expected rows: 51 sellers × 4 categories × 10 items = 2,040
+Missing rows: 40 rows (1.96% shortfall)
+What the CSV Actually Contains
+I inspected the CSV and ran aggregations on it. Here's the exact breakdown:
+
+1. Sellers: 51 unique ✓
+Distribution: All 51 sellers (S100–S150) are represented equally
+Rows per seller across all categories: ~39–40 rows per seller
+2. Categories: 4 unique ✓
+Exactly as expected, with 500 rows per category:
+
+Apparel: 500 rows
+Electronics: 500 rows
+Footwear: 500 rows
+Home Appliances: 500 rows
+3. Items per Category: 10 unique items per category ✓
+Apparel: 10 items
+Electronics: 10 items
+Footwear: 10 items
+Home Appliances: 10 items
+Why the Count is Exactly 2,000 (Not 2,040)
+If we had 51 sellers × 4 categories × 10 items with no filtering, we'd have 2,040 rows.
+
+Actual structure:
+
+51 sellers × 4 categories × 10 items = 2,040 candidate (seller, category, item) pairs
+After left_anti filtering (removing items sellers already have): 2,000 rows remain
+Rows removed: 40 (i.e., 40 seller-item pairs where the seller already has that item in their catalog)
+Why 40 Rows Were Removed (Left_Anti Join Result)
+The left_anti join in the code removes all (seller, item) pairs that already exist in the seller catalog:
+
+This means: 40 seller-item pairs among the top 40 recommended items are already in sellers' existing catalogs.
+
+Examples from the data:
+
+For item i906330 (Lg 7kg Washing Machine, Home Appliances) in the last 50 rows: all 50 seller-item pairs are included (not removed by left_anti), meaning no seller already carries this exact item.
+If the count were exactly 2,040, it would mean zero sellers currently carry any of the top-10 items per category — which is unrealistic.
+Is 2,000 Correct or Wrong?
+YES, 2,000 is the CORRECT output count.
+
+Here's why:
+
+Your requirement stated: "Identify items missing in their catalog" and "Recommend missing items to the seller"
+
+This implicitly means: recommend items that sellers don't already have.
+The left_anti join correctly removes:
+
+Any (seller, item) pair where the seller already carries that item in their catalog.
+40 such pairs exist among the 2,040 candidate recommendations.
+Business logic check:
+
+It would be incorrect to recommend an item to a seller who already sells it.
+The presence of 40 removed rows proves that at least 40 seller-item combinations are already in the catalog — which is a sign the algorithm is working correctly (it's not recommending duplicates).
+
+# Total data rows
+wc -l output.csv
+→ 2001 lines (2000 data rows + 1 header)
+
+# Distinct sellers
+cut -d',' -f1 | uniq | wc -l
+→ 51 sellers ✓
+
+# Distinct categories and row count per category
+cut -d',' -f4 | uniq -c
+→ 500 Apparel
+→ 500 Electronics
+→ 500 Footwear
+→ 500 Home Appliances
+→ Total: 2000 rows ✓
+
+# Distinct items per category
+awk -F',' '{print $4","$2}' | uniq | cut -d',' -f1 | uniq -c
+→ 10 Apparel
+→ 10 Electronics
+→ 10 Footwear
+→ 10 Home Appliances ✓
+
+# Breakdown per seller (sample)
+awk -F',' 'NR>1 {sellers[$1]++} END {for (s in sellers) print s, sellers[s]}' output.csv | head -10
+→ Each seller has ~39-40 recommendations (varies due to left_anti filtering)
+
+Mathematical Breakdown
+Dimension Count Notes
+Sellers 51  From seller_catalog_data
+Categories  4 Apparel, Electronics, Footwear, Home Appliances
+Top items per category  10  From company sales aggregation
+Candidate pairs 2,040 51 × 4 × 10 (before filtering)
+Already-have pairs  40  Removed by left_anti join
+Final recommendations 2,000 2,040 − 40
+Rows per seller avg ~39.22  2,000 ÷ 51 ≈ 39.22
+
+Conclusion
+Your output is correct. The count of 2,000 is exactly what the algorithm should produce because:
+
+✓ It starts with 2,040 candidate recommendations (51 sellers × 4 categories × 10 top items).
+✓ It removes 40 pairs where the seller already has the item (left_anti join).
+✓ It outputs 2,000 valid recommendations for items sellers don't currently have.
+No code changes are needed. The 2,040 expectation was the theoretical maximum before removing already-owned items. The actual 2,000 is the business-correct output.
+
+
+-----
+
+
+Row counts and distribution (from your previous inspection / shell checks referenced in the conversation summary).
+Each CSV has 2001 lines (1 header + 2000 data rows).
+The theoretical candidate space is 2040 pairs (51 sellers × 4 categories × 10 top-items = 2040).
+A left-anti join removes 40 seller–item pairs that sellers already carried. That yields the observed 2000 final recommendations (2040 − 40).
+Distribution matches: 4 categories × 10 unique items each → 40 unique top items; 2000 rows → 500 rows per category; average recommendations per seller ≈ 2000 ÷ 51 ≈ 39.22.
+Metric formulas match the code comments:
+market_price = COALESCE(catalog_market_price, avg_price_from_sales)
+expected_units_sold = total_units_sold_for_item / number_of_sellers_selling_this_item (null sellers_selling_count replaced by 1 to avoid divide-by-zero)
+expected_revenue = expected_units_sold * market_price
+Per-seller outputs: the script also writes per-seller files under <out_path>/per_seller/<seller_id>/ — that behavior was added and guarded with try/except.
+Conclusion — are the generated outputs correct?
+
+Yes — based on the code logic and the earlier file inspections you performed, the files at these two locations are correct for the intended algorithm and configuration:
+company CSV: /.../recommendation/company/part-00000-....csv
+competitor CSV: /.../recommendation/competitor/part-00000-....csv
+They have the expected columns, correct ordering, correct row counts (2000 data rows), and expected distribution. The 40-row difference from the theoretical 2040 is explained by the left-anti exclusion of seller items already present in catalogs.
+Notes and things to watch (possible minor anomalies)
+
+market_price fallback to 0.0: the code sets market_price to 0.0 when both catalog price and sales avg price are null. You may want to confirm if any recommendations have market_price == 0.0 (the code computes null_price_count in summary). If present, decide if you want to filter those out or flag them.
+item_name nulls: the code filters out rows where category/item_name/market_price are null earlier, but downstream per-seller writes or interim data could still be checked. The script already measures null_itemname_count.
+Performance/scaling: per-seller coalesce(1) writes are OK for a small number of sellers; for many sellers you should partition or write in parallel.
+                              -----------------------------------
+
+Summary of Changes
+Join Type What it returns Total Rows  Use case
+left_anti (current) | Pairs NOT in catalog  |  2,000  |  Recommend items sellers don't have ✅ Current
+inner |  Pairs already IN catalog |  40 |  Show what sellers already own
+left_outer  |  ALL pairs (both owned and missing) |  2,040  |  Complete candidate set
+
+Which change do you want?
+  To include only the 40 already-owned pairs: Change how="left_anti" → how="inner"
+  To include all 2,040 pairs (owned + missing): Change how="left_anti" → how="left_outer"
+                              ----------------------------------- 
+
+
+Lines requiring change to include only the 40 already-owned pairs:
+
+Location  Line #  Current Change To
+company_recommendation() function 399 how="left_anti" how="inner"
+competitor_recommendation() function  602 how="left_anti" how="inner"
+Both occurrences are in the missing join operation. Changing left_anti to inner will invert the logic:
+
+Current (left_anti): Returns pairs in sellers_top BUT NOT in seller_present → 2,000 rows (items sellers don't have)
+New (inner): Returns pairs in BOTH sellers_top AND seller_present → 40 rows (items sellers already have)                              
+
+--------------
+
+Change this block in BOTH company_recommendation and competitor_recommendation
+❌ Current code (removes 40 rows)
+missing = sellers_top.join(
+    seller_present,
+    on=[sellers_top.seller_id == seller_present.seller_id,
+        sellers_top.item_id == seller_present.item_id],
+    how="left_anti"
+).select(
+    sellers_top.seller_id.alias("seller_id"),
+    sellers_top.item_id.alias("item_id"),
+    sellers_top.item_name.alias("item_name"),
+    sellers_top.category.alias("category"),
+    sellers_top.company_total_units.alias("company_total_units"),
+    sellers_top.market_price.alias("market_price")
+)
+
+✅ Replace with this (returns ALL 2040 rows)
+# DO NOT exclude existing seller–item pairs
+missing = sellers_top.select(
+    sellers_top.seller_id.alias("seller_id"),
+    sellers_top.item_id.alias("item_id"),
+    sellers_top.item_name.alias("item_name"),
+    sellers_top.category.alias("category"),
+    sellers_top.company_total_units.alias("company_total_units"),
+    sellers_top.market_price.alias("market_price")
+)
+
+--------
+
+
+missing = sellers_top.select(
+    sellers_top.seller_id.alias("seller_id"),
+    sellers_top.item_id.alias("item_id"),
+    sellers_top.item_name.alias("item_name"),
+    sellers_top.category.alias("category"),
+    sellers_top.total_units.alias("total_units"),
+    sellers_top.market_price.alias("market_price")
+)
+
+
+If 40 pairs are already owned, they get excluded.
+
+Final = 2040 – 40 = 2000
+
+✔ Why 500 per category
+
+Because:
+
+2000 rows / 4 categories = 500
+
+
+Each category has:
+
+10 items
+
+51 sellers
+
+minus ~1 seller per item (already selling)
+
+≈ 500 rows per category.

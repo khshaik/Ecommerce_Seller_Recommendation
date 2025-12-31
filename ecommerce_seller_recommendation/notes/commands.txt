@@ -1,0 +1,165 @@
+python3 -m venv .venv
+source .venv/bin/activate
+
+export PYTHONPATH=$PYTHONPATH:/Users/81194246/Desktop/Workspace/CTX/2025em1100102
+
+export PYTHONPATH="/Users/81194246/Desktop/Workspace/CTX/2025em1100102:$PYTHONPATH"
+spark-submit --jars /home/cloud/spark_jars/hudi-spark3.5-bundle_2.12-1.0.2.jar,/home/cloud/spark_jars/hadoop-aws-3.3.4.jar,/home/cloud/spark_jars/aws-java-sdk-bundle-1.12.262.jar /home/cloud/week8/retail.py
+
+                                    -------------------------------------------------------
+
+PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/81194246/Desktop/jars/woodstox-core-6.2.9.jar:/Users/81194246/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/81194246/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/81194246/Desktop/jars/hadoop-common-3.3.4.jar,/Users/81194246/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/81194246/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/81194246/Desktop/jars/delta-storage-3.2.0.jar,/Users/81194246/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.local.src.etl_company_sales \
+--config 2025em1100102/ecommerce_seller_recommendation/local/config/ecomm_prod.yml
+
+PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/81194246/Desktop/jars/woodstox-core-6.2.9.jar:/Users/81194246/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/81194246/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/81194246/Desktop/jars/hadoop-common-3.3.4.jar,/Users/81194246/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/81194246/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/81194246/Desktop/jars/delta-storage-3.2.0.jar,/Users/81194246/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.local.src.etl_seller_catalog \
+--config 2025em1100102/ecommerce_seller_recommendation/local/config/ecomm_prod.yml
+
+PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/81194246/Desktop/jars/woodstox-core-6.2.9.jar:/Users/81194246/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/81194246/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/81194246/Desktop/jars/hadoop-common-3.3.4.jar,/Users/81194246/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/81194246/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/81194246/Desktop/jars/delta-storage-3.2.0.jar,/Users/81194246/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.local.src.etl_competitor_sales \
+--config 2025em1100102/ecommerce_seller_recommendation/local/config/ecomm_prod.yml
+
+PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/81194246/Desktop/jars/woodstox-core-6.2.9.jar:/Users/81194246/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/81194246/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/81194246/Desktop/jars/hadoop-common-3.3.4.jar,/Users/81194246/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/81194246/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/81194246/Desktop/jars/delta-storage-3.2.0.jar,/Users/81194246/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.local.src.consumption_recommendation \
+--config 2025em1100102/ecommerce_seller_recommendation/local/config/ecomm_prod.yml
+
+																		-------------------------------------------------------
+
+How to Run Now?
+1. Company-Only Recommendation
+python consumption_recommendation.py --config ecomm_prod.yml --mode company
+
+PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/81194246/Desktop/jars/woodstox-core-6.2.9.jar:/Users/81194246/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/81194246/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/81194246/Desktop/jars/hadoop-common-3.3.4.jar,/Users/81194246/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/81194246/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/81194246/Desktop/jars/delta-storage-3.2.0.jar,/Users/81194246/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.s3.src.consumption_recommendation \
+--config 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_ecomm_prod.yml --mode company
+
+2. Competitor-Only Recommendation
+python consumption_recommendation.py --config ecomm_prod.yml --mode competitor
+
+PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/81194246/Desktop/jars/woodstox-core-6.2.9.jar:/Users/81194246/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/81194246/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/81194246/Desktop/jars/hadoop-common-3.3.4.jar,/Users/81194246/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/81194246/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/81194246/Desktop/jars/delta-storage-3.2.0.jar,/Users/81194246/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.local.src.consumption_recommendation \
+--config 2025em1100102/ecommerce_seller_recommendation/local/config/ecomm_prod.yml --mode competitor
+
+PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/81194246/Desktop/jars/woodstox-core-6.2.9.jar:/Users/81194246/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/81194246/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/81194246/Desktop/jars/hadoop-common-3.3.4.jar,/Users/81194246/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/81194246/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/81194246/Desktop/jars/delta-storage-3.2.0.jar,/Users/81194246/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.local.src.consumption_recommendation \
+--config 2025em1100102/ecommerce_seller_recommendation/local/config/ecomm_prod.yml --mode both
+
+PYSPARK_SUBMIT_ARGS="--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.kryo.registrationRequired=false \
+--driver-java-options '-Dfs.s3a.connection.timeout=60000 -Dfs.s3a.connection.establish.timeout=5000 -Dfs.s3a.attempts.maximum=5 -Dfs.s3a.connection.maximum=200' \
+--driver-class-path /Users/81194246/Desktop/jars/woodstox-core-6.2.9.jar:/Users/81194246/Desktop/jars/stax2-api-4.2.1.jar \
+--jars /Users/81194246/Desktop/jars/hadoop-aws-3.3.4.jar,/Users/81194246/Desktop/jars/hadoop-common-3.3.4.jar,/Users/81194246/Desktop/jars/aws-java-sdk-bundle-1.12.696.jar,/Users/81194246/Desktop/jars/delta-spark_2.12-3.2.0.jar,/Users/81194246/Desktop/jars/delta-storage-3.2.0.jar,/Users/81194246/Desktop/jars/hudi-spark3.5-bundle_2.12-1.0.2.jar pyspark-shell" \
+python -m 2025em1100102.ecommerce_seller_recommendation.local.src.validate_logic \
+--config 2025em1100102/ecommerce_seller_recommendation/local/config/ecomm_prod.yml
+
+3. Both (Default Behavior)
+python consumption_recommendation.py --config ecomm_prod.yml
+python consumption_recommendation.py --config ecomm_prod.yml --mode both
+
+																		-------------------------------------------------------
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  <rollnumber>/ecommerce_seller_recommendation/src/<programname>.py \
+  --config configs/ecomm_prod.yml
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/local/src/etl_company_sales.py \
+  --config configs/ecomm_prod.yml			
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/local/src/etl_seller_catalog.py \
+  --config configs/ecomm_prod.yml       
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/local/src/etl_competitor_sales.py \
+  --config configs/ecomm_prod.yml       
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/local/src/consumption_recommendation.py \
+  --config configs/ecomm_prod.yml           
+                                    -------------------------------------------------------
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/s3/src/etl_company_sales.py \
+  --config 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/s3/src/etl_company_sales.py \
+  --config 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/s3/src/etl_seller_catalog.py \
+  --config 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/s3/src/etl_competitor_sales.py \
+  --config 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml       
+
+spark-submit \
+  --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.15.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.sql.legacy.timeParserPolicy=LEGACY \
+  2025em1100102/ecommerce_seller_recommendation/s3/src/consumption_recommendation.py \
+  --config 2025em1100102/ecommerce_seller_recommendation/s3/configs/ecomm_prod.yml       
+
+DSP_GA_2025em1100102_20112025/2025em1100102
+DSP_GA_2025em1100102_20112025> ./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_company_sales_spark_submit.sh
+DSP_GA_2025em1100102_20112025> ./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_seller_catalog_spark_submit.sh
+DSP_GA_2025em1100102_20112025> ./2025em1100102/ecommerce_seller_recommendation/s3/scripts/etl_competitor_sales_spark_submit.sh
+DSP_GA_2025em1100102_20112025> ./2025em1100102/ecommerce_seller_recommendation/s3/scripts/consumption_recommendation_spark_submit.sh

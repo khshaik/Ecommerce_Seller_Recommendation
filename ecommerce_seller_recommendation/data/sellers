@@ -1,0 +1,173 @@
+Assignment#1: Ecommerce Top-Seller items Recommendation System
+Use Case Overview
+You are tasked with building a recommendation system for sellers on an e-commerce platform.
+In an e-commerce marketplace:
+• There are multiple sellers, each with their own catalog of items.
+• The platform tracks sales data for all items across all sellers and competitors.
+• Some items are top-selling but not available in all seller catalogs.
+Your job is to analyze internal sales and competitor data and recommend top 10 selling items that
+each seller currently does not have. This will help sellers increase revenue and profit by onboarding
+these items.
+This pipeline should ingest, clean, and validate data, handle schema evolution, and generate
+actionable recommendations.
+
+sellers
+--------
+Key Objectives
+1. Identify top-selling items within the company
+o Analyze all sellers’ sales data.
+o Determine which items sell the most in each category.
+
+Inputs :
+
+File
+seller_id,	item_id,	item_name,	category,	marketplace_price,	stock_qty
+S128,	I10000,	Adidas Ultraboost 23,	Footwear,	126325.53,	319
+
+Location
+/Users/81194246/desktop/workspace/ctx/2025em1100102/ecommerce_seller_recommendation/local/data/input/customers/competitor_sales_dirty.csv
+
+Data Cleaning and DQ Checks:
+1. Seller Catalog
+Columns: seller_id, item_id, item_name, category, marketplace_price, stock_qty
+Cleaning Steps:
+• Trim whitespace in all string columns (seller_id, item_id, item_name, category).
+• Normalize casing:
+item_name → Title Case
+category → Standardized labels (e.g., “Electronics”, “Apparel”)
+• Remove duplicates based on key (seller_id + item_id).
+• Convert marketplace_price → DOUBLE, stock_qty → INT.
+• Fill missing stock_qty with 0 if applicable.
+
+DQ Checks:
+Rule, Expression, Action
+-Seller ID exists, seller_id IS NOT NULL, Quarantine
+-Item ID exists, item_id IS NOT NULL, Quarantine
+-Price valid, marketplace_price >= 0, Quarantine
+-Stock valid, stock_qty >= 0, Quarantine
+-Item name present, item_name IS NOT NULL, Quarantine
+-Category present, category IS NOT NULL, Quarantine
+
+NOTE:
+-seller_id and item_id together form a unique key.
+-marketplace_price is the main column for revenue calculations.
+-All datasets may contain dirty data, which should be cleaned or moved to the quarantine zone.
+-Data which fail DOQ check criteria must be moved to Quarantine zone.
+-Cleaned/Formatted data must be saved into silver folder as files.
+-Understanding the purpose of each column helps determine cleaning, validation, and derivation logic (e.g., revenue, expected revenue).
+-Cleaned/Formatted data must be saved into silver folder as files. -Understanding the purpose of each column helps determine cleaning, validation, and derivation logic (e.g., revenue, expected revenue).
+
+Quarantine Zone Handling:
+• Records failing any DQ check should be moved to a quarantine path
+• Quarantine path should include:
+o Input datasetname
+o Original record
+o dq_failure_reason (e.g., price_negative, missing_item_id)
+
+config file location
+"/Users/81194246/desktop/workspace/ctx/2025em1100102/ecommerce_seller_recommendation/local/config/config.yaml"
+
+input location
+raw_sellers_catalogue_data: "/Users/81194246/desktop/workspace/ctx/2025em1100102/ecommerce_seller_recommendation/local/data/input/sellers/competitor_sales_dirty.csv
+
+quarantine location
+quarantine_sellers_catalogue_data: "/Users/81194246/desktop/workspace/ctx/2025em1100102/ecommerce_seller_recommendation/local/data/quarantine/sellers/competitor_sales_dirty.cs
+
+silver location
+silver_sellers_catalogue_data: "/Users/81194246/desktop/workspace/ctx/ds/dsp/ecom_etl/data/output/silver/sellers"
+
+src/etl_company_sales_spark_submit.sh
+File to be generated having the required logic for reading/cleaning/formatting sales catalogue data.
+
+Referring above generate code separately for config.yaml, etl_company_sales_spark_submit.sh by reading attached input csv file, mentioned as part of input location. Cleaned/Formated records must be written to file within silver location and filtered/bad records must be written to file under quarantine location. Follow Medallian architecture. Generate clean code with proper comments.
+
+company
+--------
+item_id,	units_sold,	revenue,	sale_date
+I10000,	820,	110129976.7,	27/10/25
+
+2. Compare each seller’s catalog against top-selling 10 items
+o Identify items missing in their catalog.
+o Recommend missing items to the seller.
+
+Inputs :
+Data Cleaning and DQ Checks:
+2. Company Sales Data
+Columns: item_id, units_sold, revenue, sale_date
+Cleaning Steps:
+• Trim strings if needed (item_id)
+• Convert units_sold → INT, revenue → DOUBLE, sale_date → DATE.
+• Remove duplicates based on item_id.
+• Fill missing units_sold or revenue with 0.
+• Standardize sale_date format.
+
+DQ Checks:
+Rule Expression Action
+Item ID exists item_id IS NOT NULL Quarantine
+Units sold valid units_sold >= 0 Quarantine
+Revenue valid revenue >= 0 Quarantine
+Sale date valid sale_date IS NOT NULL AND sale_date <= current_date() Quarantine
+
+Quarantine Zone Handling:
+• Records failing any DQ check should be moved to a quarantine path
+• Quarantine path should include:
+o Input datasetname
+o Original record
+o dq_failure_reason (e.g., price_negative, missing_item_id)
+
+competitors
+------------
+seller_id,	item_id,	units_sold,	revenue,	marketplace_price,	sale_date
+C245,	I10000,	972,	31703642.48,	122801.8,	17/09/25
+
+3. Analyze competitor data
+o Identify top-selling items in the market (competitor sales).
+o Recommend items missing from the company’s catalog but performing well in the market.
+
+seller_id and item_id together form a unique key.
+marketplace_price is the main column for revenue calculations.
+All datasets may contain dirty data, which should be cleaned or moved to the quarantine zone.
+Understanding the purpose of each column helps determine cleaning, validation, and derivation logic (e.g., revenue, expected revenue).
+
+Inputs :
+Data Cleaning and DQ Checks:
+3. Competitor Sales Data
+Columns: item_id, units_sold, revenue, marketplace_price, seller_id, sale_date
+Cleaning Steps
+• Trim strings (item_id, seller_id) and normalize casing.
+• Convert numeric columns to proper types (units_sold → INT, revenue → DOUBLE,
+marketplace_price → DOUBLE).
+• Convert sale_date → DATE.
+• Fill missing numeric fields (units_sold, revenue, marketplace_price) with 0.
+
+DQ Checks
+Rule Expression Action
+Item ID exists item_id IS NOT NULL Quarantine
+Seller ID exists seller_id IS NOT NULL Quarantine
+Units sold valid units_sold >= 0 Quarantine
+Revenue valid revenue >= 0 Quarantine
+Marketplace price
+valid marketplace_price >= 0 Quarantine
+Sale date valid sale_date IS NOT NULL AND sale_date <=
+current_date() Quarantine
+
+Quarantine Zone Handling:
+• Records failing any DQ check should be moved to a quarantine path
+• Quarantine path should include:
+o Input datasetname
+o Original record
+o dq_failure_reason (e.g., price_negative, missing_item_id)
+
+-----
+
+Key Requirements
+1. ETL Ingestion (15 Marks)
+• Read input datasets (CSV/JSON) via a YAML-configurable pipeline. This should support your daily incremental data as well
+• Use Apache Hudi for:
+o Schema evolution (handle new columns or type changes)
+o Incremental upserts (idempotent writes)
+• Data Cleaning and DQ Checks
+• Quarantine Zone Handling
+• Use medallion architecture and on top of that have a quarantine zone to move all your bad data, before loading the data into gold layer you need to do the data cleaning and DQ validations
+• Output cleaned data to Hudi tables for consumption.
+• output should be different Hudi table with overwrite mode

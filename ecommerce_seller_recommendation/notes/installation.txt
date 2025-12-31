@@ -1,0 +1,83 @@
+Combo:
+
+Java 11 or 17
+Hadoop 3.3.4
+Spark 3.5.1
+Hudi 0.15.0
+AWS CLI
+hudi-spark3.5-bundle_2.12-0.15.0.jar
+hadoop-aws-3.3.6.jar
+aws-java-sdk-bundle-1.12.262.jar
+
+
+STEP 1 — Enable WSL + Install Ubuntu
+Open PowerShell as Administrator and run:
+wsl --install
+After reboot → You’ll see Ubuntu terminal.
+Set a username + password.
+
+STEP 2 — Update Ubuntu
+Inside Ubuntu terminal:
+sudo apt update && sudo apt upgrade -y
+
+STEP 3 — Install Java 17 (REQUIRED for Spark)
+sudo apt install openjdk-17-jdk -y
+Verify:
+java -version
+you should see Java 17.
+
+STEP 4 — Download Apache Spark (Hadoop 3)
+WSL supports full Hadoop native libs — no winutils needed
+
+wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
+tar -xvf spark-3.5.1-bin-hadoop3.tgz
+sudo mv spark-3.5.1-bin-hadoop3 /opt/spark
+
+STEP 5 — Add Spark to PATH
+Edit your bash profile:
+nano ~/.bashrc
+Add these lines at the end:
+
+export SPARK_HOME=/opt/spark
+export PATH=$SPARK_HOME/bin:$PATH
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+Save → exit → reload:
+source ~/.bashrc
+Test:
+spark-shell
+
+If you see Spark shell starting → you’re officially running Spark ON LINUX inside Windows.
+
+STEP 6 — Add Hudi + Hadoop-AWS support
+Create directory:
+mkdir ~/spark-jars
+
+Download the required jars:
+
+wget -P ~/spark-jars https://repo1.maven.org/maven2/org/apache/hudi/hudi-spark3.5-bundle_2.12/0.15.0/hudi-spark3.5-bundle_2.12-0.15.0.jar
+wget -P ~/spark-jars https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.6/hadoop-aws-3.3.6.jar
+wget -P ~/spark-jars https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar
+
+Now Spark can talk to S3 and Hudi.
+
+STEP 7 — Mount Windows code folder in WSL (Optional but Recommended)
+Your folder is:
+
+C:\<id>\<ecom_recomendations>\<src>\local or s3
+In WSL, this appears at:
+/mnt/c/<id>\<ecom_recomendations>\<src>\local or s3
+
+Let’s work from WSL:
+cd /mnt/<id>\<ecom_recomendations>\<src>\local or s3
+
+All your Python files will run from WSL now 🤩
+
+STEP 8 — Run your code with Spark inside WSL
+Example:
+
+spark-submit \
+  --jars ~/spark-jars/hudi-spark3.5-bundle_2.12-0.15.0.jar,\
+~/spark-jars/hadoop-aws-3.3.6.jar,\
+~/spark-jars/aws-java-sdk-bundle-1.12.262.jar \
+  src/etl_seller_catalog.py
